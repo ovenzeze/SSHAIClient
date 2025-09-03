@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleName</key>
+    <string>SSH AI Client</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>armv7</string>
+    </array>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    
+    <!-- iOS 18 新特性支持 -->
+    <key>NSAppleIntelligenceUsageDescription</key>
+    <string>This app uses Apple Intelligence to provide smart command suggestions while keeping your data private.</string>
+    
+    <key>NSControlCenterSupported</key>
+    <true/>
+    
+    <!-- 隐私描述 -->
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>This app connects to SSH servers on your local network.</string>
+    
+    <key>NSPasskeyUsageDescription</key>
+    <string>Use passkeys for secure authentication to SSH servers.</string>
+</dict>
+</plist>

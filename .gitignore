@@ -1,0 +1,10 @@
+.DS_Store
+/.swiftpm
+/.build
+DerivedData
+*.xcworkspace
+*.xcodeproj
+.env
+.vscode
+.idea
+Resources/Assets.xcassets/*.imageset/*
