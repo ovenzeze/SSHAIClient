@@ -14,13 +14,13 @@ final class TerminalViewModel: ObservableObject {
 	@Published private(set) var isConnected: Bool = false
 	@Published private(set) var currentSuggestion: String? // preview text only (UI formats)
 	
-	private let ssh: SSHConnectionManager
+	private let ssh: SSHManaging
 	private let classifier: HybridIntentClassifier
 	private let generator: CommandGenerator
 	private let data: LocalDataManager
 	
 	init(
-		ssh: SSHConnectionManager,
+		ssh: SSHManaging,
 		classifier: HybridIntentClassifier,
 		generator: CommandGenerator,
 		data: LocalDataManager
@@ -35,9 +35,20 @@ final class TerminalViewModel: ObservableObject {
 	/// - Parameter config: SSH config containing host/port/user/auth.
 	/// - Returns: Bool indicating immediate success of the connection attempt.
 	@MainActor
-	func connect(config: SSHConnectionManager.SSHConfig) async -> Bool {
-		// Logic (not implemented): call ssh.connect, update published state.
-		return false
+	func connect(config: SSHConfig) async -> Bool {
+		do {
+			let connectionId = try await ssh.connect(config: config)
+			self.currentConnectionId = connectionId
+			self.isConnected = true
+			return true
+		} catch {
+			self.currentConnectionId = nil
+			self.isConnected = false
+			// Optionally, we could have a @Published error property to show alerts.
+			// For now, just logging it.
+			print("SSH connection failed: \(error)")
+			return false
+		}
 	}
 	
 	/// Handle user input in Auto mode.

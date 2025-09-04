@@ -4,7 +4,8 @@ import PackageDescription
 let package = Package(
     name: "SSHAIClient",
     platforms: [
-        .iOS(.v16)
+        .iOS(.v16),
+        .macOS(.v10_15)
     ],
     products: [
         .library(name: "SSHAIClient", targets: ["SSHAIClient"])
@@ -22,6 +23,10 @@ let package = Package(
                 .product(name: "SwiftTerm", package: "SwiftTerm"),
                 .product(name: "SQLite", package: "SQLite.swift")
             ]
+        ),
+        .testTarget(
+            name: "SSHAIClientTests",
+            dependencies: ["SSHAIClient"]
         )
     ]
 )

@@ -92,9 +92,10 @@
 
 #### **2.2. 核心组件设计**
 
-*   **`SSHConnectionManager`**:
+*   **`NIOSSHManager`** (实现 `SSHManaging` 协议):
     *   **职责**: 管理所有 SSH 连接的生命周期（连接、认证、执行命令、断开）。
-    *   **实现**: 基于 `SwiftNIO SSH`，使用 `async/await` 封装异步操作。通过 `@Published` 属性发布连接状态，驱动 UI 更新。维护一个 `[UUID: SSHConnection]` 字典来管理多个活动连接。
+    *   **实现**: 基于 `SwiftNIO SSH`，使用 `async/await` 封装异步操作。通过协议抽象确保可测试性。维护一个 `[UUID: Channel]` 字典来管理多个活动连接。
+    *   **架构优势**: 采用依赖注入模式，`TerminalViewModel` 依赖于 `SSHManaging` 协议而非具体实现，便于单元测试和功能扩展。
 
 *   **`HybridIntentClassifier`**:
     *   **职责**: 实现“Auto 模式”的核心意图路由。
@@ -137,4 +138,51 @@
 
 *   **Control Center (iOS 18+)**:
     *   **集成点**: `SSHAIClientApp` 入口。
-    *   **策略**: 创建 `ControlCenterIntegration` 类，注册一个或多个快捷操作（如“快速连接到最近的服务器”）。利用该入口提升用户访问高频功能的效率。
+    *   **策略**: 创建 `ControlCenterIntegration` 类，注册一个或多个快捷操作（如"快速连接到最近的服务器"）。利用该入口提升用户访问高频功能的效率。
+
+---
+
+### **5. SSH 实现方案选择 (SSH Implementation Strategy)**
+
+#### **5.1. 方案评估过程**
+
+在项目开发过程中，我们对 SSH 连接的实现方案进行了深入的技术调研和对比：
+
+| 方案 | 优势 | 劣势 | 评估结果 |
+|------|------|------|----------|
+| **方案 A: SwiftNIO SSH** | • Apple 官方维护<br>• 功能完整，支持 SSHv2<br>• 性能优异<br>• 社区支持活跃<br>• 文档完整 | • API 相对底层<br>• 需要理解 NIO 概念<br>• 初期开发工作量较大 | ✅ **最终选择** |
+| **方案 B: swift-ssh-client** | • 高级封装，API 简洁<br>• 开发效率高<br>• 代码量少 | • 第三方维护<br>• 版本管理问题<br>• 依赖解析困难<br>• 文档不完整 | ❌ 放弃 |
+
+#### **5.2. 最终方案：SwiftNIO SSH**
+
+**选择理由：**
+1. **稳定性优先**: Apple 官方项目保证长期维护和更新
+2. **技术债务最小化**: 避免依赖不稳定的第三方库
+3. **学习价值**: 掌握 NIO 对团队技术栈有长期价值
+4. **问题解决能力**: 官方库遇到问题更容易找到解决方案
+
+**实现架构：**
+- 使用 `ClientBootstrap` 建立 SSH 连接
+- 通过 `NIOSSHHandler` 处理 SSH 协议细节
+- 实现 `PasswordAuthDelegate` 处理用户认证
+- 使用 `ExecHandler` 执行远程命令
+- 维护连接池管理多个并发连接
+
+#### **5.3. 协议抽象设计**
+
+为了确保架构的灵活性和可测试性，我们引入了 `SSHManaging` 协议：
+
+```swift
+protocol SSHManaging {
+    func connect(config: SSHConfig) async throws -> UUID
+    func execute(connectionId: UUID, request: CommandRequest) async throws -> CommandResult
+    func disconnect(connectionId: UUID) async throws
+}
+```
+
+**架构优势：**
+- **依赖倒置**: `TerminalViewModel` 依赖抽象而非具体实现
+- **可测试性**: 轻松创建 Mock 对象进行单元测试
+- **可扩展性**: 未来可以轻松切换或添加新的 SSH 实现
+
+---
