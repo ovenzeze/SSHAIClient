@@ -105,39 +105,60 @@ private struct TerminalView_Legacy: View {
         self.viewModel = viewModel
     }
 
-var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             // Tabs bar
             TerminalTabsBar(tabs: $tabs, selected: $selectedTabId, onNew: addTab, onClose: closeTab)
             
             // Command history/output area
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(currentHistory.enumerated()), id: \.offset) { _, command in
-                        HStack(alignment: .top, spacing: 8) {
-                            Text("$")
-                                .foregroundColor(.green)
-                                .font(.system(.body, design: .monospaced))
-                            
-                            highlightedCommandText(command)
-                                .modifier(TextSelectionModifier())
-                            Spacer()
+                ScrollViewReader { proxy in
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(viewModel.commandHistory) { item in
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack {
+                                    Text("[\(item.formattedTimestamp)]").foregroundColor(.gray).font(.system(size: 11, design: .monospaced))
+                                    Text("$").foregroundColor(.green).font(.system(.body, design: .monospaced))
+                                    Text(item.command).font(.system(size: 14, design: .monospaced)).foregroundColor(.blue).modifier(TextSelectionModifier())
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.top, 4)
+                                if !item.output.isEmpty {
+                                    Text(item.output)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.white)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                                if let error = item.error, !error.isEmpty {
+                                    Text(error)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.red)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                            }
+                            .id(item.id)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
+                        if let suggestion = viewModel.currentSuggestion {
+                            SuggestionCard(suggestion: suggestion) {
+                                inputText = suggestion.command
+                            } onExecute: {
+                                Task { await viewModel.executeSuggestion() }
+                            }
+                            .padding(.horizontal, 12)
+                        }
                     }
-                    
-                    // AI Suggestion card
-                    if let suggestion = viewModel.currentSuggestion {
-                        SuggestionCard(suggestion: suggestion) {
-                            inputText = suggestion.command
-                        } onExecute: {
-                            Task { await viewModel.executeSuggestion() }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .onChange(of: viewModel.commandHistory.count) { _ in
+                        if let lastItem = viewModel.commandHistory.last {
+                            withAnimation { proxy.scrollTo(lastItem.id, anchor: .bottom) }
                         }
-                        .padding(.horizontal, 12)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .background(Color.black)
             .foregroundColor(.white)
@@ -148,7 +169,7 @@ var body: some View {
             // Input area
             VStack(spacing: 6) {
                 HStack {
-TextField("Enter command or natural language...", text: $inputText)
+                    TextField("Enter command or natural language...", text: $inputText)
                         .textFieldStyle(.plain)
                         .font(.system(.body, design: .monospaced))
                         .lineLimit(1)
@@ -258,39 +279,61 @@ private struct TerminalView_Modern: View {
         self.viewModel = viewModel
     }
 
-var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             // Tabs bar
             TerminalTabsBar(tabs: $tabs, selected: $selectedTabId, onNew: addTab, onClose: closeTab)
             
             // Command history/output area
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(currentHistory.enumerated()), id: \.offset) { _, command in
-                        HStack(alignment: .top, spacing: 8) {
-                            Text("$")
-                                .foregroundColor(.green)
-                                .font(.system(.body, design: .monospaced))
-                            
-                            highlightedCommandText(command)
-                                .modifier(TextSelectionModifier())
-                            Spacer()
+                ScrollViewReader { proxy in
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(viewModel.commandHistory) { item in
+                            VStack(alignment: .leading, spacing: 2) {
+                                HStack {
+                                    Text("[\(item.formattedTimestamp)]").foregroundColor(.gray).font(.system(size: 11, design: .monospaced))
+                                    Text("$").foregroundColor(.green).font(.system(.body, design: .monospaced))
+                                    Text(item.command).font(.system(size: 14, design: .monospaced)).foregroundColor(.blue).modifier(TextSelectionModifier())
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.top, 4)
+                                if !item.output.isEmpty {
+                                    Text(item.output)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.white)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                                if let error = item.error, !error.isEmpty {
+                                    Text(error)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.red)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                            }
+                            .id(item.id)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
-                    }
                     
-                    // Show current suggestion if available
-                    if let suggestion = viewModel.currentSuggestion {
-                        SuggestionCard(suggestion: suggestion) {
-                            inputText = suggestion.command
-                        } onExecute: {
-                            Task { await viewModel.executeSuggestion() }
+                        if let suggestion = viewModel.currentSuggestion {
+                            SuggestionCard(suggestion: suggestion) {
+                                inputText = suggestion.command
+                            } onExecute: {
+                                Task { await viewModel.executeSuggestion() }
+                            }
+                            .padding(.horizontal, 12)
                         }
-                        .padding(.horizontal, 12)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .onChange(of: viewModel.commandHistory.count) { _ in
+                        if let lastItem = viewModel.commandHistory.last {
+                            withAnimation { proxy.scrollTo(lastItem.id, anchor: .bottom) }
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .background(Color.black)
             .foregroundColor(.white)

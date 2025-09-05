@@ -1,68 +1,103 @@
 import SwiftUI
+import Foundation
 
 @available(macOS 11.0, *)
 public struct ContentView: View {
     @StateObject private var viewModel: TerminalViewModel
-    @StateObject private var connVM = ConnectionManagerViewModel()
+    @StateObject private var configManager = SSHConfigManager.shared
     @State private var showSettings = false
-    @State private var showSidebar = true
+    @State private var connectionError: String? = nil
+    @State private var isConnecting = false
 
     public init() {
-        // Initialize dependencies
-        let sshManager = MockSSHManager()
-        let classifier = SimpleInputClassifier()
-        let generator = CommandGenerator()
-        let dataManager = LocalDataManager()
-
-        self._viewModel = StateObject(wrappedValue: TerminalViewModel(
-            ssh: sshManager,
-            classifier: classifier,
-            generator: generator,
-            data: dataManager
-        ))
+        // 使用真实的SSH管理器，不再区分Mock和Real
+        let vm = TerminalViewModel(
+            ssh: NIOSSHManager(),
+            classifier: SimpleInputClassifier(),
+            generator: CommandGenerator(),
+            data: LocalDataManager()
+        )
+        _viewModel = StateObject(wrappedValue: vm)
     }
 
-    public var body: some View {
+public var body: some View {
         VStack(spacing: 0) {
-            // Header with connection status
-            HeaderView(viewModel: viewModel)
-                .overlay(
-                    HStack {
-                        Spacer()
-                        HStack(spacing: 8) {
-                            Button(action: { withAnimation { showSidebar.toggle() } }) {
-                                Image(systemName: showSidebar ? "sidebar.leading" : "sidebar.left")
-                            }
-                            .help("Toggle sidebar")
-                            Button(action: { showSettings = true }) {
-                                Image(systemName: "gearshape")
-                            }
-                            .help("Settings")
-                        }
-                        .padding(.trailing, 8)
+            // Top Bar
+            HStack {
+                // Connection Info
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(viewModel.isConnected ? Color.green : (isConnecting ? Color.orange : Color.gray))
+                        .frame(width: 8, height: 8)
+                    
+                    if isConnecting {
+                        ProgressView()
+                            .controlSize(.small)
+                            .scaleEffect(0.7)
                     }
-                )
-
-            Divider()
-
-            // Main area with optional sidebar
-            HStack(spacing: 0) {
-                if showSidebar {
-                    ConnectionManager(viewModel: connVM) { conn in
-                        connect(from: conn)
-                    }
-                    .frame(minWidth: 240, idealWidth: 280, maxWidth: 320)
-                    .background(Color(PlatformColor.windowBackgroundColor))
+                    
+                    Text(connectionStatusText)
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(.secondary)
                 }
-
-                Divider()
-
-                // Terminal Area
-                TerminalView(viewModel: viewModel)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                Spacer()
+                
+                // Actions
+                HStack(spacing: 12) {
+                    if viewModel.isConnected {
+                        Button("Disconnect") {
+                            Task { await disconnect() }
+                        }
+                        .controlSize(.small)
+                    } else if !isConnecting {
+                        Button("Connect") {
+                            Task { await connect() }
+                        }
+                        .controlSize(.small)
+                        .keyboardShortcut("k", modifiers: .command)
+                    }
+                    
+                    Button(action: { showSettings = true }) {
+                        Image(systemName: "gearshape")
+                    }
+                    .buttonStyle(.plain)
+                    .help("Settings (⌘,)")
+                    .keyboardShortcut(",", modifiers: .command)
+                }
             }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(Color(NSColor.controlBackgroundColor))
+            
+            Divider()
+            
+            // Error Alert
+            if let error = connectionError {
+                HStack {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .foregroundColor(.orange)
+                    Text(error)
+                        .font(.system(size: 11))
+                        .lineLimit(2)
+                    Spacer()
+                    Button("Dismiss") {
+                        connectionError = nil
+                    }
+                    .controlSize(.mini)
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(Color.orange.opacity(0.1))
+                
+                Divider()
+            }
+            
+            // Main terminal area
+            TerminalView(viewModel: viewModel)
         }
-        .sheet(isPresented: $showSettings) { SettingsView() }
+.sheet(isPresented: $showSettings) { SettingsView() }
         .background(Color(PlatformColor.controlBackgroundColor))
         .onAppear {
             // Ensure window activation on macOS
@@ -77,64 +112,57 @@ public struct ContentView: View {
                     window.makeKey()
                 }
             }
-            #endif
-        }
-    }
-
-    private func connect(from conn: SSHConnection) {
-        let cfg = SSHConfig(host: conn.host, port: conn.port, username: conn.username, authentication: .password(""), timeoutSeconds: 30)
-        Task { _ = await viewModel.connect(config: cfg) }
-    }
-}
-
-@available(macOS 11.0, *)
-public struct HeaderView: View {
-    @ObservedObject var viewModel: TerminalViewModel
-
-    public init(viewModel: TerminalViewModel) {
-        self.viewModel = viewModel
-    }
-
-    public var body: some View {
-        HStack {
-            // Connection status indicator
-            HStack(spacing: 8) {
-                Circle()
-                    .fill(viewModel.isConnected ? Color.green : Color.red)
-                    .frame(width: 10, height: 10)
-
-                Text(viewModel.isConnected ? "Connected" : "Disconnected")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            // Connect button
-            if !viewModel.isConnected {
-                Button("Connect") {
-                    Task {
-                        await connectToDemo()
-                    }
+#endif
+            
+            // Auto-connect if configured
+            if configManager.autoConnect && !viewModel.isConnected {
+                Task {
+                    await connect()
                 }
-                .modifier(BorderedProminentButtonModifier())
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(PlatformColor.windowBackgroundColor))
     }
-
-    private func connectToDemo() async {
-        // Demo connection - in a real app this would show a connection dialog
-        let config = SSHConfig(
-            host: "demo.host",
-            port: 22,
-            username: "demo",
-            authentication: .password("demo"),
-            timeoutSeconds: 30
-        )
-
-        let _ = await viewModel.connect(config: config)
+    
+    private var connectionStatusText: String {
+        if isConnecting {
+            return "Connecting to \(configManager.host)..."
+        } else if viewModel.isConnected {
+            return "\(configManager.username)@\(configManager.host):\(configManager.port)"
+        } else {
+            return "Not connected"
+        }
+    }
+    
+    @MainActor
+    private func connect() async {
+        // 验证配置
+        let validation = configManager.isConfigValid()
+        guard validation.valid else {
+            connectionError = validation.message
+            return
+        }
+        
+        isConnecting = true
+        connectionError = nil
+        
+        // 获取当前配置
+        let config = configManager.currentConfig()
+        
+        do {
+            if let err = await viewModel.connect(config: config) {
+                connectionError = err.localizedDescription
+            } else {
+                // 成功连接，添加到最近使用
+                configManager.addToRecentHosts(config.host)
+            }
+        }
+        
+        isConnecting = false
+    }
+    
+    @MainActor
+    private func disconnect() async {
+        await viewModel.disconnect()
+        connectionError = nil
     }
 }
