@@ -20,7 +20,7 @@ public struct ContentView: View {
         _viewModel = StateObject(wrappedValue: vm)
     }
 
-    public var body: some View {
+public var body: some View {
         VStack(spacing: 0) {
             // Top Bar
             HStack {
@@ -97,10 +97,8 @@ public struct ContentView: View {
             // Main terminal area
             TerminalView(viewModel: viewModel)
         }
+.sheet(isPresented: $showSettings) { SettingsView() }
         .background(Color(PlatformColor.controlBackgroundColor))
-        .sheet(isPresented: $showSettings) {
-            SettingsView()
-        }
         .onAppear {
             // Ensure window activation on macOS
             #if os(macOS)
@@ -114,7 +112,7 @@ public struct ContentView: View {
                     window.makeKey()
                 }
             }
-            #endif
+#endif
             
             // Auto-connect if configured
             if configManager.autoConnect && !viewModel.isConnected {

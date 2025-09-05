@@ -1,0 +1,250 @@
+{
+  "request_example": {
+    "version": "1.0",
+    "requestId": "550e8400-e29b-41d4-a716-446655440000",
+    "timestamp": "2024-12-05T09:35:39Z",
+    "input": {
+      "type": "natural_language",
+      "content": "find all large log files and compress them",
+      "language": "en"
+    },
+    "context": {
+      "system": {
+        "os": "Darwin",
+        "osVersion": "23.6.0",
+        "architecture": "arm64",
+        "hostname": "MacBook-Pro.local",
+        "kernelVersion": "23.6.0"
+      },
+      "terminal": {
+        "shell": "zsh",
+        "shellVersion": "5.9",
+        "workingDirectory": "/var/log",
+        "environmentVariables": {
+          "TERM": "xterm-256color",
+          "LANG": "en_US.UTF-8"
+        },
+        "terminalType": "xterm-256color"
+      },
+      "user": {
+        "username": "admin",
+        "userId": "501",
+        "permissions": "admin",
+        "preferences": {
+          "preferSafeMode": true,
+          "allowDestructiveCommands": false,
+          "preferVerboseOutput": false,
+          "customAliases": {
+            "ll": "ls -la",
+            "gs": "git status"
+          }
+        }
+      },
+      "history": {
+        "recentCommands": [
+          "ls -la",
+          "df -h",
+          "du -sh *"
+        ],
+        "sessionId": "session-12345",
+        "sessionStartTime": "2024-12-05T09:00:00Z"
+      }
+    },
+    "options": {
+      "maxTokens": 500,
+      "temperature": 0.1,
+      "stream": false,
+      "timeout": 30.0,
+      "model": "openai/gpt-oss-120b"
+    }
+  },
+  "response_success_example": {
+    "version": "1.0",
+    "requestId": "550e8400-e29b-41d4-a716-446655440000",
+    "timestamp": "2024-12-05T09:35:40Z",
+    "result": {
+      "status": "success",
+      "commands": [
+        {
+          "id": "cmd-001",
+          "content": "find /var/log -type f -name '*.log' -size +100M -exec gzip {} \\;",
+          "type": "shell",
+          "risk": {
+            "level": "medium",
+            "score": 0.4,
+            "factors": [
+              "modifies files",
+              "recursive operation",
+              "affects system logs"
+            ],
+            "warnings": [
+              "This will compress original files in place",
+              "Some applications may not be able to write to compressed logs"
+            ],
+            "requiresConfirmation": true
+          },
+          "alternatives": [
+            {
+              "command": "find /var/log -type f -name '*.log' -size +100M -exec gzip -k {} \\;",
+              "description": "Keep original files (requires more disk space)",
+              "tradeoffs": "Uses more disk space but preserves originals"
+            },
+            {
+              "command": "find /var/log -type f -name '*.log' -size +100M | xargs tar -czf logs_archive.tar.gz",
+              "description": "Create a single archive file",
+              "tradeoffs": "All files in one archive, easier to manage but harder to access individual files"
+            }
+          ],
+          "dependencies": [
+            "gzip",
+            "find"
+          ],
+          "platforms": [
+            "Darwin",
+            "Linux"
+          ]
+        }
+      ],
+      "explanation": {
+        "summary": "Find and compress large log files in /var/log directory",
+        "details": "This command searches for all .log files larger than 100MB and compresses them using gzip",
+        "steps": [
+          {
+            "order": 1,
+            "description": "Search for .log files in /var/log",
+            "command": "find /var/log -type f -name '*.log'",
+            "note": "Recursively searches all subdirectories"
+          },
+          {
+            "order": 2,
+            "description": "Filter files larger than 100MB",
+            "command": "-size +100M",
+            "note": "100M = 100 megabytes"
+          },
+          {
+            "order": 3,
+            "description": "Compress each file with gzip",
+            "command": "-exec gzip {} \\;",
+            "note": "Replaces original file with compressed version"
+          }
+        ],
+        "references": [
+          "man find",
+          "man gzip",
+          "https://www.gnu.org/software/findutils/manual/"
+        ]
+      }
+    },
+    "metadata": {
+      "model": "openai/gpt-oss-120b",
+      "provider": "groq",
+      "confidence": 0.95,
+      "processingTime": 0.342,
+      "cacheHit": false,
+      "tags": [
+        "file-management",
+        "compression",
+        "system-administration"
+      ]
+    },
+    "usage": {
+      "promptTokens": 245,
+      "completionTokens": 189,
+      "totalTokens": 434,
+      "cost": 0.00087
+    }
+  },
+  "response_error_example": {
+    "version": "1.0",
+    "requestId": "550e8400-e29b-41d4-a716-446655440001",
+    "timestamp": "2024-12-05T09:36:00Z",
+    "result": {
+      "status": "error",
+      "commands": null,
+      "explanation": null,
+      "error": {
+        "code": "DANGEROUS_OPERATION",
+        "message": "The requested operation could cause data loss",
+        "type": "dangerous",
+        "suggestions": [
+          "Add the -k flag to keep original files",
+          "Create a backup before compressing",
+          "Use a test directory first"
+        ]
+      }
+    },
+    "metadata": {
+      "model": "openai/gpt-oss-120b",
+      "provider": "groq",
+      "confidence": 0.2,
+      "processingTime": 0.128,
+      "cacheHit": false,
+      "tags": ["error", "safety-check"]
+    },
+    "usage": null
+  },
+  "response_clarification_example": {
+    "version": "1.0",
+    "requestId": "550e8400-e29b-41d4-a716-446655440002",
+    "timestamp": "2024-12-05T09:36:30Z",
+    "result": {
+      "status": "needs_clarification",
+      "commands": [
+        {
+          "id": "cmd-opt-1",
+          "content": "find . -name '*.log' -size +100M",
+          "type": "shell",
+          "risk": {
+            "level": "safe",
+            "score": 0.1,
+            "factors": ["read-only operation"],
+            "warnings": null,
+            "requiresConfirmation": false
+          }
+        },
+        {
+          "id": "cmd-opt-2",
+          "content": "find / -name '*.log' -size +100M",
+          "type": "shell",
+          "risk": {
+            "level": "safe",
+            "score": 0.1,
+            "factors": ["read-only operation"],
+            "warnings": ["May take a long time on large filesystems"],
+            "requiresConfirmation": false
+          }
+        }
+      ],
+      "explanation": {
+        "summary": "Multiple interpretations possible",
+        "details": "Please clarify the search scope and compression method",
+        "steps": null,
+        "references": null
+      },
+      "error": {
+        "code": "AMBIGUOUS_REQUEST",
+        "message": "Please specify: 1) Search directory (current or system-wide?), 2) Compression method (in-place or archive?)",
+        "type": "ambiguous",
+        "suggestions": [
+          "Specify the directory to search in",
+          "Clarify if you want to keep original files",
+          "Indicate preferred compression format"
+        ]
+      }
+    },
+    "metadata": {
+      "model": "openai/gpt-oss-120b",
+      "provider": "groq",
+      "confidence": 0.6,
+      "processingTime": 0.215,
+      "cacheHit": false,
+      "tags": ["clarification-needed"]
+    },
+    "usage": {
+      "promptTokens": 198,
+      "completionTokens": 156,
+      "totalTokens": 354,
+      "cost": 0.00071
+    }
+  }
+}
