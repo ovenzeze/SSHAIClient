@@ -6,7 +6,6 @@ import SwiftUI
 private struct TerminalView_Legacy: View {
     @ObservedObject var viewModel: TerminalViewModel
     @State private var inputText = ""
-    @State private var commandHistory: [String] = []
     @State private var isProcessing = false
 
     init(viewModel: TerminalViewModel) {
@@ -17,38 +16,77 @@ private struct TerminalView_Legacy: View {
         VStack(spacing: 0) {
             // Command history/output area
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(commandHistory.enumerated()), id: \.offset) { index, command in
-                        HStack {
-                            Text("$")
-                                .foregroundColor(.green)
-                                .font(.system(.body, design: .monospaced))
-                            
-                            Text(command)
-                                .font(.system(size: 14, design: .monospaced))
-                                .modifier(TextSelectionModifier())
-                            
-                            Spacer()
+                ScrollViewReader { proxy in
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(viewModel.commandHistory) { item in
+                            VStack(alignment: .leading, spacing: 2) {
+                                // Command line
+                                HStack {
+                                    Text("[\(item.formattedTimestamp)]")
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 11, design: .monospaced))
+                                    
+                                    Text("$")
+                                        .foregroundColor(.green)
+                                        .font(.system(.body, design: .monospaced))
+                                    
+                                    Text(item.command)
+                                        .font(.system(size: 14, design: .monospaced))
+                                        .foregroundColor(.blue)
+                                        .modifier(TextSelectionModifier())
+                                    
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.top, 4)
+                                
+                                // Output
+                                if !item.output.isEmpty {
+                                    Text(item.output)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.white)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                                
+                                // Error output
+                                if let error = item.error, !error.isEmpty {
+                                    Text(error)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.red)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                            }
+                            .id(item.id)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
-                    }
                     
-                    // Show current suggestion if available
-                    if let suggestion = viewModel.currentSuggestion {
-                        SuggestionCard(suggestion: suggestion) {
-                            // Accept suggestion
-                            inputText = suggestion.command
-                        } onExecute: {
-                            // Execute suggestion directly
-                            Task {
-                                await viewModel.executeSuggestion()
+                        // Show current suggestion if available
+                        if let suggestion = viewModel.currentSuggestion {
+                            SuggestionCard(suggestion: suggestion) {
+                                // Accept suggestion
+                                inputText = suggestion.command
+                            } onExecute: {
+                                // Execute suggestion directly
+                                Task {
+                                    await viewModel.executeSuggestion()
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .onChange(of: viewModel.commandHistory.count) { _ in
+                        // Auto-scroll to bottom when new command is added
+                        if let lastItem = viewModel.commandHistory.last {
+                            withAnimation {
+                                proxy.scrollTo(lastItem.id, anchor: .bottom)
                             }
                         }
-                        .padding(.horizontal, 12)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .background(Color.black)
             .foregroundColor(.white)
@@ -87,11 +125,8 @@ private struct TerminalView_Legacy: View {
         inputText = ""
         isProcessing = true
         
-        // Add to history
-        commandHistory.append(input)
-        
         Task {
-            // Simulate processing
+            // Process input through view model
             await viewModel.handleAutoInput(input)
             
             await MainActor.run {
@@ -107,7 +142,6 @@ private struct TerminalView_Legacy: View {
 private struct TerminalView_Modern: View {
     @ObservedObject var viewModel: TerminalViewModel
     @State private var inputText = ""
-    @State private var commandHistory: [String] = []
     @State private var isProcessing = false
     @FocusState private var isTextFieldFocused: Bool
 
@@ -119,38 +153,77 @@ private struct TerminalView_Modern: View {
         VStack(spacing: 0) {
             // Command history/output area
             ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(commandHistory.enumerated()), id: \.offset) { index, command in
-                        HStack {
-                            Text("$")
-                                .foregroundColor(.green)
-                                .font(.system(.body, design: .monospaced))
-                            
-                            Text(command)
-                                .font(.system(.body, design: .monospaced))
-                                .modifier(TextSelectionModifier())
-                            
-                            Spacer()
+                ScrollViewReader { proxy in
+                    VStack(alignment: .leading, spacing: 4) {
+                        ForEach(viewModel.commandHistory) { item in
+                            VStack(alignment: .leading, spacing: 2) {
+                                // Command line
+                                HStack {
+                                    Text("[\(item.formattedTimestamp)]")
+                                        .foregroundColor(.gray)
+                                        .font(.system(size: 11, design: .monospaced))
+                                    
+                                    Text("$")
+                                        .foregroundColor(.green)
+                                        .font(.system(.body, design: .monospaced))
+                                    
+                                    Text(item.command)
+                                        .font(.system(size: 14, design: .monospaced))
+                                        .foregroundColor(.blue)
+                                        .modifier(TextSelectionModifier())
+                                    
+                                    Spacer()
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.top, 4)
+                                
+                                // Output
+                                if !item.output.isEmpty {
+                                    Text(item.output)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.white)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                                
+                                // Error output
+                                if let error = item.error, !error.isEmpty {
+                                    Text(error)
+                                        .font(.system(size: 13, design: .monospaced))
+                                        .foregroundColor(.red)
+                                        .modifier(TextSelectionModifier())
+                                        .padding(.horizontal, 12)
+                                        .padding(.leading, 20)
+                                }
+                            }
+                            .id(item.id)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
-                    }
                     
-                    // Show current suggestion if available
-                    if let suggestion = viewModel.currentSuggestion {
-                        SuggestionCard(suggestion: suggestion) {
-                            // Accept suggestion
-                            inputText = suggestion.command
-                        } onExecute: {
-                            // Execute suggestion directly
-                            Task {
-                                await viewModel.executeSuggestion()
+                        // Show current suggestion if available
+                        if let suggestion = viewModel.currentSuggestion {
+                            SuggestionCard(suggestion: suggestion) {
+                                // Accept suggestion
+                                inputText = suggestion.command
+                            } onExecute: {
+                                // Execute suggestion directly
+                                Task {
+                                    await viewModel.executeSuggestion()
+                                }
+                            }
+                            .padding(.horizontal, 12)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .onChange(of: viewModel.commandHistory.count) { _ in
+                        // Auto-scroll to bottom when new command is added
+                        if let lastItem = viewModel.commandHistory.last {
+                            withAnimation {
+                                proxy.scrollTo(lastItem.id, anchor: .bottom)
                             }
                         }
-                        .padding(.horizontal, 12)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .background(Color.black)
             .foregroundColor(.white)
@@ -199,11 +272,8 @@ private struct TerminalView_Modern: View {
         inputText = ""
         isProcessing = true
         
-        // Add to history
-        commandHistory.append(input)
-        
         Task {
-            // Simulate processing
+            // Process input through view model
             await viewModel.handleAutoInput(input)
             
             await MainActor.run {

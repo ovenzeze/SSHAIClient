@@ -13,6 +13,19 @@ public final class TerminalViewModel: ObservableObject {
 	@Published public private(set) var currentConnectionId: UUID?
 	@Published public private(set) var isConnected: Bool = false
 	@Published public private(set) var currentSuggestion: CommandSuggestion? // AI生成的完整建议
+	@Published public private(set) var commandHistory: [CommandHistoryItem] = []
+	
+	// Sanitize terminal control sequences (OSC 1337, ANSI CSI, etc.) before showing in UI
+	private func sanitizeOutput(_ text: String) -> String {
+		var result = text
+		// iTerm2/OSC sequences like: ESC ] 1337 ; ... BEL  or  ESC ] 1337 ; ... ESC \\
+		let oscPattern = "\u{001B}\\][0-9]{1,4};.*?(?:\u{0007}|\u{001B}\\\\)"
+		// General ANSI CSI sequences like: ESC [ 0;31m or other control codes ending in @-~
+		let csiPattern = "\u{001B}\\[[0-9;?]*[ -/]*[@-~]"
+		result = result.replacingOccurrences(of: oscPattern, with: "", options: .regularExpression)
+		result = result.replacingOccurrences(of: csiPattern, with: "", options: .regularExpression)
+		return result
+	}
 	
 	private let ssh: SSHManaging
 	private let classifier: SimpleInputClassifier
@@ -81,15 +94,24 @@ public final class TerminalViewModel: ObservableObject {
 	public func executeCommand(_ command: String) async {
 		guard isConnected, let connectionId = currentConnectionId else {
 			print("No active connection")
+			// Add error to history
+			let item = CommandHistoryItem(
+				command: command,
+				output: "Error: No active SSH connection",
+				error: nil,
+				exitCode: -1,
+				timestamp: Date()
+			)
+			commandHistory.append(item)
 			return
 		}
 		
 		do {
 			let request = CommandRequest(
 				command: command,
-				workingDirectory: "/Users/demo/workspace",
+				workingDirectory: nil, // Let server decide
 				environment: nil,
-				allocatePty: true
+				allocatePty: false // Simple command execution
 			)
 			
 			let result = try await ssh.execute(connectionId: connectionId, request: request)
@@ -97,18 +119,42 @@ public final class TerminalViewModel: ObservableObject {
 			// Clear any current suggestion since we executed a command
 			self.currentSuggestion = nil
 			
-			// In a real app, we would save this to data manager and update UI
-			// For now, just log the result
+			// Sanitize outputs before presenting
+			let cleanStdout = sanitizeOutput(result.stdout)
+			let cleanStderr = sanitizeOutput(result.stderr)
+			
+			// Add to command history with output
+			let item = CommandHistoryItem(
+				command: command,
+				output: cleanStdout,
+				error: cleanStderr.isEmpty ? nil : cleanStderr,
+				exitCode: result.exitCode,
+				timestamp: Date()
+			)
+			commandHistory.append(item)
+			
+			// Also log for debugging
 			print("Command executed: \(command)")
 			print("Exit code: \(result.exitCode)")
-			print("Stdout: \(result.stdout)")
+			if !result.stdout.isEmpty {
+				print("Stdout: \(result.stdout)")
+			}
 			if !result.stderr.isEmpty {
 				print("Stderr: \(result.stderr)")
 			}
 			
 		} catch {
 			print("Command execution failed: \(error)")
-			// In a real app, we would use ErrorAnalyzer here
+			// Add error to history (sanitize message just in case)
+			let cleanError = sanitizeOutput("Execution failed: \(error.localizedDescription)")
+			let item = CommandHistoryItem(
+				command: command,
+				output: "",
+				error: cleanError,
+				exitCode: -1,
+				timestamp: Date()
+			)
+			commandHistory.append(item)
 		}
 	}
 	
@@ -141,5 +187,23 @@ public final class TerminalViewModel: ObservableObject {
 		
 		await executeCommand(suggestion.command)
 		self.currentSuggestion = nil // 清除建议
+	}
+	
+	/// Disconnect from the current SSH session
+	@MainActor
+	public func disconnect() async {
+		guard let connectionId = currentConnectionId else {
+			return
+		}
+		
+		do {
+			try await ssh.disconnect(connectionId: connectionId)
+		} catch {
+			print("Disconnect failed: \(error)")
+		}
+		
+		self.currentConnectionId = nil
+		self.isConnected = false
+		self.currentSuggestion = nil
 	}
 }
