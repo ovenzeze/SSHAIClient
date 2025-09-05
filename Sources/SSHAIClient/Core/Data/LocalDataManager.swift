@@ -100,7 +100,9 @@ public final class LocalDataManager: @unchecked Sendable {
 
     private func decryptFromB64(_ b64: String) throws -> String {
         let key = try SecureStore.getKey()
-        let combined = Data(base64Encoded: b64) ?? Data()
+        guard let combined = Data(base64Encoded: b64) else { 
+            throw NSError(domain: "LocalDataManager", code: -3, userInfo: [NSLocalizedDescriptionKey: "Invalid base64 string for decryption"])
+        }
         let box = try AES.GCM.SealedBox(combined: combined)
         let data = try AES.GCM.open(box, using: key)
         return String(decoding: data, as: UTF8.self)
