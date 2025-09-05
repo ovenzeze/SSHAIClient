@@ -266,3 +266,49 @@ private struct WindowFocusModifier: ViewModifier {
     }
     #endif
 }
+
+// MARK: - Reusable UI Helpers
+
+@available(macOS 11.0, *)
+public struct SearchBar: View {
+    @Binding var text: String
+    var placeholder: String
+
+    public init(text: Binding<String>, placeholder: String = "Search") {
+        self._text = text
+        self.placeholder = placeholder
+    }
+
+    public var body: some View {
+        HStack(spacing: 6) {
+            Image(systemName: "magnifyingglass").foregroundColor(.secondary)
+            TextField(placeholder, text: $text)
+                .textFieldStyle(.plain)
+                .disableAutocorrection(true)
+            if !text.isEmpty {
+                Button(action: { text = "" }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Clear search"))
+            }
+        }
+        .padding(8)
+        .background(Color(PlatformColor.textBackgroundColor))
+        .cornerRadius(8)
+    }
+}
+
+@available(macOS 11.0, *)
+public struct SectionHeader: View {
+    let title: String
+    public init(_ title: String) { self.title = title }
+    public var body: some View {
+        HStack {
+            Text(title).font(.caption).foregroundColor(.secondary)
+            Spacer()
+        }
+        .padding(.vertical, 4)
+    }
+}

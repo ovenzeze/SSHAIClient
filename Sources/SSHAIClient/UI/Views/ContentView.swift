@@ -3,6 +3,9 @@ import SwiftUI
 @available(macOS 11.0, *)
 public struct ContentView: View {
     @StateObject private var viewModel: TerminalViewModel
+    @StateObject private var connVM = ConnectionManagerViewModel()
+    @State private var showSettings = false
+    @State private var showSidebar = true
 
     public init() {
         // Initialize dependencies
@@ -23,12 +26,43 @@ public struct ContentView: View {
         VStack(spacing: 0) {
             // Header with connection status
             HeaderView(viewModel: viewModel)
+                .overlay(
+                    HStack {
+                        Spacer()
+                        HStack(spacing: 8) {
+                            Button(action: { withAnimation { showSidebar.toggle() } }) {
+                                Image(systemName: showSidebar ? "sidebar.leading" : "sidebar.left")
+                            }
+                            .help("Toggle sidebar")
+                            Button(action: { showSettings = true }) {
+                                Image(systemName: "gearshape")
+                            }
+                            .help("Settings")
+                        }
+                        .padding(.trailing, 8)
+                    }
+                )
 
             Divider()
 
-            // Main terminal area
-            TerminalView(viewModel: viewModel)
+            // Main area with optional sidebar
+            HStack(spacing: 0) {
+                if showSidebar {
+                    ConnectionManager(viewModel: connVM) { conn in
+                        connect(from: conn)
+                    }
+                    .frame(minWidth: 240, idealWidth: 280, maxWidth: 320)
+                    .background(Color(PlatformColor.windowBackgroundColor))
+                }
+
+                Divider()
+
+                // Terminal Area
+                TerminalView(viewModel: viewModel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            }
         }
+        .sheet(isPresented: $showSettings) { SettingsView() }
         .background(Color(PlatformColor.controlBackgroundColor))
         .onAppear {
             // Ensure window activation on macOS
@@ -45,6 +79,11 @@ public struct ContentView: View {
             }
             #endif
         }
+    }
+
+    private func connect(from conn: SSHConnection) {
+        let cfg = SSHConfig(host: conn.host, port: conn.port, username: conn.username, authentication: .password(""), timeoutSeconds: 30)
+        Task { _ = await viewModel.connect(config: cfg) }
     }
 }
 
