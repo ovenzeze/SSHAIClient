@@ -6,7 +6,7 @@ enum KeychainStore {
     private static let account = "com.sshaiclient.datakey.v1"
 
     static func getOrCreateKey() throws -> SymmetricKey {
-        if let existing = try? loadKeyData() {
+        if let existing = try loadKeyData() {
             return SymmetricKey(data: existing)
         }
         // Generate random 32-byte key
