@@ -280,6 +280,8 @@ op signin
 ### Debug Mode
 ```swift
 // Enable verbose logging (in development)
+// ⚠️ SECURITY WARNING: Never enable verbose logging in production environments
+// as it may expose sensitive data like API keys and user inputs in logs
 let config = AIServiceConfig(
     provider: .groq,
     timeout: 60.0,  // Longer timeout for debugging

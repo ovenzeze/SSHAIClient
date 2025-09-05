@@ -25,10 +25,11 @@ public protocol AIServiceManaging: Sendable {
 
 // MARK: - AI Provider Enumeration
 
+/// AI Provider enumeration defining supported AI service providers
 public enum AIProvider: String, CaseIterable, Sendable {
-    case groq = "groq"
-    case openai = "openai"
-    case claude = "claude"
+    case groq = "groq"          // Groq: High-performance inference platform with free tier
+    case openai = "openai"      // OpenAI: GPT models, premium quality, paid service
+    case claude = "claude"      // Anthropic Claude: Advanced reasoning, moderate pricing
     case ollama = "ollama"
     case custom = "custom"
     

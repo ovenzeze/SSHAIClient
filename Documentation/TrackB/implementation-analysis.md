@@ -164,16 +164,18 @@ func testCommandResponseParsing() throws {
    - API key 管理 mock
    - 配置验证
 
-#### ⚠️ **误导性测试 (12/39 测试)**
+#### ⚠️ **需要重构的测试 (12/39 测试)**
 
-这些测试通过了，但实际上不能验证真实功能：
+**重要安全说明**: 这些测试通过了，但实际上不能验证真实功能，可能给出错误的安全感。应该重构或删除这些测试。
 
 ```swift
-func testCommandGenerationWithMock() // ❌ 不测试真实 AI 调用
-func testIntentClassificationPromptBuilding() // ❌ 只测试 prompt 构建
+func testCommandGenerationWithMock() // ❌ 不测试真实 AI 调用 - 需要重构
+func testIntentClassificationPromptBuilding() // ❌ 只测试 prompt 构建 - 误导性
 func testMissingAPIKey() // ✅ 实际上这个是有效的，测试错误处理
-func testCommandResponseParsing() // ⚠️ 只测试已知格式的解析
+func testCommandResponseParsing() // ⚠️ 只测试已知格式的解析 - 限制性
 ```
+
+**修复建议**: 这些测试应该被重构为集成测试或完全删除，以避免给出错误的测试覆盖率印象。
 
 ---
 
@@ -236,6 +238,7 @@ op signin
 ```swift
 func testRealAPICall() async throws {
     // 只在有真实 API key 时运行
+    // 重要：在隔离环境中运行以防止意外副作用
     guard ProcessInfo.processInfo.environment["INTEGRATION_TESTS"] == "true" else {
         throw XCTSkip("Integration tests disabled")
     }
@@ -249,7 +252,8 @@ protocol HTTPClientProtocol {
     func data(for request: URLRequest) async throws -> (Data, URLResponse)
 }
 
-// 这样可以 mock 网络层
+// 重要：Mock网络层以防止测试期间的实际API调用
+// 这确保测试的确定性和防止意外的网络请求
 ```
 
 3. **环境依赖检查**

@@ -374,6 +374,9 @@ extension OpenAICompatibleClient {
         }
     }
     
+    /// Fallback mechanism for parsing commands from unstructured AI responses
+    /// ⚠️ LIMITATIONS: This fallback has limited accuracy and may extract incorrect commands
+    /// from free-form text responses. Should only be used when structured JSON parsing fails.
     private func parseCommandFromPlainText(_ content: String) -> CommandSuggestion {
         // Simple extraction of command from plain text (fallback)
         let lines = content.components(separatedBy: .newlines)

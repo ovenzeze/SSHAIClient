@@ -177,7 +177,7 @@ public protocol RemoteAIServiceManaging: AIServiceManaging {
 ### High Priority
 1. **Rule Engine Scalability**: Hard-coded patterns won't scale to hundreds of commands
 2. **Context Utilization**: Rich context data is collected but not used effectively  
-3. **AI Integration Placeholder**: `HybridIntentClassifier` needs complete rewrite
+3. **AI Integration Implementation**: `HybridIntentClassifier` needs complete rewrite to integrate with remote AI services and implement local classification logic
 4. **Performance Concerns**: No caching, every request processes from scratch
 
 ### Medium Priority  

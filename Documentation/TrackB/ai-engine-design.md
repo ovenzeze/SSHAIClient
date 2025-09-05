@@ -166,8 +166,8 @@ struct GitCommandPatterns {
     // Advanced operations
     "stash changes" → "git stash"
     "apply stashed changes" → "git stash pop"
-    "reset to commit <hash>" → "git reset --hard {hash}" // Risk: dangerous
-    "rebase interactive" → "git rebase -i HEAD~3" // Risk: caution
+    "reset to commit <hash>" → "git reset --hard {hash}" // Risk: dangerous - DESTRUCTIVE: permanently loses uncommitted changes
+    "rebase interactive" → "git rebase -i HEAD~3" // Risk: caution - can rewrite commit history
 }
 ```
 

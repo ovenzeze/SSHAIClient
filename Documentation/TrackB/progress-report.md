@@ -54,13 +54,13 @@ Successfully implemented a comprehensive AI engine for SSHAIClient with OpenAI-c
 
 ### Provider Support Matrix
 
-| Provider | Status | Model | Speed | Cost | Notes |
-|----------|--------|-------|-------|------|--------|
-| **Groq** | ✅ Default | llama3-70b-8192 | 🚀 Very Fast | 💚 Free | Recommended |
-| OpenAI | ✅ Supported | gpt-4 | 🐌 Moderate | 💰 Expensive | Premium option |
-| Claude | ✅ Supported | claude-3-sonnet | 🚶 Slow | 💸 Moderate | High quality |
-| Ollama | ✅ Supported | llama2 | 🚀 Fast | 💚 Free | Local deployment |
-| Custom | ✅ Supported | Configurable | Variable | Variable | Extensible |
+| Provider | Status | Model | Speed | Cost | API Stability | Notes |
+|----------|--------|-------|-------|------|---------------|--------|
+| **Groq** | ✅ Default | llama3-70b-8192 | 🚀 Very Fast | 💚 Free | 🟢 Excellent | Recommended |
+| OpenAI | ✅ Supported | gpt-4 | 🐌 Moderate | 💰 Expensive | 🟢 Excellent | Premium option |
+| Claude | ✅ Supported | claude-3-sonnet | 🚶 Slow | 💸 Moderate | 🟡 Good | High quality |
+| Ollama | ✅ Supported | llama2 | 🚀 Fast | 💚 Free | 🟡 Variable | Local deployment |
+| Custom | ✅ Supported | Configurable | Variable | Variable | 🟡 Variable | Extensible |
 
 ---
 
