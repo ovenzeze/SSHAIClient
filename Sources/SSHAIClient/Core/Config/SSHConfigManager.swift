@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 /// 管理SSH连接配置的单例类，使用UserDefaults存储
 @available(macOS 11.0, *)
@@ -29,7 +30,7 @@ public class SSHConfigManager: ObservableObject {
     @Published public var password: String = "" {
         didSet { 
             if authMethod == .password {
-                saveToKeychain(password, forKey: KeychainKeys.password)
+                saveToKeychain(password, forAccount: KeychainKeys.passwordAccount)
             }
         }
     }
@@ -45,7 +46,7 @@ public class SSHConfigManager: ObservableObject {
     @Published public var passphrase: String = "" {
         didSet {
             if authMethod == .privateKey && !passphrase.isEmpty {
-                saveToKeychain(passphrase, forKey: KeychainKeys.passphrase)
+                saveToKeychain(passphrase, forAccount: KeychainKeys.passphraseAccount)
             }
         }
     }
@@ -89,8 +90,9 @@ public class SSHConfigManager: ObservableObject {
     }
     
     private struct KeychainKeys {
-        static let password = "com.sshai.password"
-        static let passphrase = "com.sshai.passphrase"
+        static let service = "com.sshai.client"
+        static let passwordAccount = "password"
+        static let passphraseAccount = "passphrase"
     }
     
     private init() {
@@ -109,9 +111,9 @@ public class SSHConfigManager: ObservableObject {
         self.connectionTimeout = UserDefaults.standard.object(forKey: Keys.timeout) as? Int ?? 10
         self.recentHosts = UserDefaults.standard.stringArray(forKey: Keys.recentHosts) ?? ["localhost", "127.0.0.1"]
         
-        // 从Keychain加载敏感信息
-        self.password = loadFromKeychain(forKey: KeychainKeys.password) ?? ""
-        self.passphrase = loadFromKeychain(forKey: KeychainKeys.passphrase) ?? ""
+        // 从Keychain加载敏感信息（系统Keychain）
+        self.password = Keychain.load(service: KeychainKeys.service, account: KeychainKeys.passwordAccount) ?? ""
+        self.passphrase = Keychain.load(service: KeychainKeys.service, account: KeychainKeys.passphraseAccount) ?? ""
     }
     
     /// 生成当前配置的SSHConfig对象
@@ -125,11 +127,13 @@ public class SSHConfigManager: ObservableObject {
             // 扩展home路径
             let expandedPath = NSString(string: privateKeyPath).expandingTildeInPath
             // 读取私钥文件内容
-            if let keyData = try? Data(contentsOf: URL(fileURLWithPath: expandedPath)) {
+            do {
+                let keyData = try Data(contentsOf: URL(fileURLWithPath: expandedPath))
                 authentication = .privateKey(pem: keyData, passphrase: passphrase.isEmpty ? nil : passphrase)
-            } else {
-                // 如果无法读取文件，回退到密码认证
-                authentication = .password("")
+            } catch {
+                print("Error reading private key file at \(expandedPath): \(error)")
+                // 生成一定会失败的配置，避免误导性回退
+                authentication = .privateKey(pem: Data(), passphrase: nil)
             }
         case .none:
             // 对于无认证场景，使用空密码
@@ -186,7 +190,10 @@ public class SSHConfigManager: ObservableObject {
         // 根据认证方式验证
         switch authMethod {
         case .password:
-            // 密码可以为空（某些服务器允许）
+            // 统一策略：不允许空密码，避免混淆
+            if password.isEmpty {
+                return (false, "Password cannot be empty")
+            }
             return (true, nil)
         case .privateKey:
             let expandedPath = NSString(string: privateKeyPath).expandingTildeInPath
@@ -210,29 +217,22 @@ public class SSHConfigManager: ObservableObject {
         switch authMethod {
         case .password:
             UserDefaults.standard.removeObject(forKey: Keys.privateKeyPath)
-            deleteFromKeychain(forKey: KeychainKeys.passphrase)
+            deleteFromKeychain(forAccount: KeychainKeys.passphraseAccount)
         case .privateKey:
-            deleteFromKeychain(forKey: KeychainKeys.password)
+            deleteFromKeychain(forAccount: KeychainKeys.passwordAccount)
         case .none:
-            deleteFromKeychain(forKey: KeychainKeys.password)
-            deleteFromKeychain(forKey: KeychainKeys.passphrase)
+            deleteFromKeychain(forAccount: KeychainKeys.passwordAccount)
+            deleteFromKeychain(forAccount: KeychainKeys.passphraseAccount)
         }
     }
     
-    // MARK: - Keychain Helpers (simplified for demo)
+    // MARK: - Keychain Helpers (system keychain)
     
-    private func saveToKeychain(_ value: String, forKey key: String) {
-        // 简化版本：在生产环境应该使用真正的Keychain API
-        // 这里暂时使用UserDefaults（不安全，仅用于演示）
-        UserDefaults.standard.set(value, forKey: "keychain.\(key)")
+    private func saveToKeychain(_ value: String, forAccount account: String) {
+        Keychain.save(service: KeychainKeys.service, account: account, value: value)
     }
     
-    private func loadFromKeychain(forKey key: String) -> String? {
-        // 简化版本：在生产环境应该使用真正的Keychain API
-        return UserDefaults.standard.string(forKey: "keychain.\(key)")
-    }
-    
-    private func deleteFromKeychain(forKey key: String) {
-        UserDefaults.standard.removeObject(forKey: "keychain.\(key)")
+    private func deleteFromKeychain(forAccount account: String) {
+        Keychain.delete(service: KeychainKeys.service, account: account)
     }
 }

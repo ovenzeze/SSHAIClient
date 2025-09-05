@@ -151,12 +151,11 @@ public struct ContentView: View {
         let config = configManager.currentConfig()
         
         do {
-            let success = await viewModel.connect(config: config)
-            if success {
+            if let err = await viewModel.connect(config: config) {
+                connectionError = err.localizedDescription
+            } else {
                 // 成功连接，添加到最近使用
                 configManager.addToRecentHosts(config.host)
-            } else {
-                connectionError = "Failed to connect"
             }
         }
         

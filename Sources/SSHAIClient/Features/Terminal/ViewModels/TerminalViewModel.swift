@@ -47,22 +47,20 @@ public final class TerminalViewModel: ObservableObject {
 	/// Connect to a target host.
 	/// - Parameter config: SSH config containing host/port/user/auth.
 	/// - Returns: Bool indicating immediate success of the connection attempt.
-	@MainActor
-	public func connect(config: SSHConfig) async -> Bool {
-		do {
-			let connectionId = try await ssh.connect(config: config)
-			self.currentConnectionId = connectionId
-			self.isConnected = true
-			return true
-		} catch {
-			self.currentConnectionId = nil
-			self.isConnected = false
-			// Optionally, we could have a @Published error property to show alerts.
-			// For now, just logging it.
-			print("SSH connection failed: \(error)")
-			return false
-		}
-	}
+    @MainActor
+    public func connect(config: SSHConfig) async -> Error? {
+        do {
+            let connectionId = try await ssh.connect(config: config)
+            self.currentConnectionId = connectionId
+            self.isConnected = true
+            return nil
+        } catch {
+            self.currentConnectionId = nil
+            self.isConnected = false
+            print("SSH connection failed: \(error)")
+            return error
+        }
+    }
 	
 	/// Handle user input - 分类后直接执行或生成AI建议
 	/// - Parameter input: Raw text from the input bar.

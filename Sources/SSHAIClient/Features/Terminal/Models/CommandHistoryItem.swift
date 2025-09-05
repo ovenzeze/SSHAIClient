@@ -29,10 +29,14 @@ public struct CommandHistoryItem: Identifiable {
     }
     
     /// 格式化的时间戳
-    public var formattedTimestamp: String {
+    private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .medium
         formatter.dateStyle = .none
-        return formatter.string(from: timestamp)
+        return formatter
+    }()
+
+    public var formattedTimestamp: String {
+        return Self.timeFormatter.string(from: timestamp)
     }
 }
