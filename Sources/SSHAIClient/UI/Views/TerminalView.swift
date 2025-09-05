@@ -105,7 +105,7 @@ private struct TerminalView_Legacy: View {
         self.viewModel = viewModel
     }
 
-var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             // Tabs bar
             TerminalTabsBar(tabs: $tabs, selected: $selectedTabId, onNew: addTab, onClose: closeTab)
@@ -160,23 +160,6 @@ var body: some View {
                     }
                 }
             }
-                        if let suggestion = viewModel.currentSuggestion {
-                            SuggestionCard(suggestion: suggestion) {
-                                inputText = suggestion.command
-                            } onExecute: {
-                                Task { await viewModel.executeSuggestion() }
-                            }
-                            .padding(.horizontal, 12)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .onChange(of: viewModel.commandHistory.count) { _ in
-                        if let lastItem = viewModel.commandHistory.last {
-                            withAnimation { proxy.scrollTo(lastItem.id, anchor: .bottom) }
-                        }
-                    }
-                }
-            }
             .background(Color.black)
             .foregroundColor(.white)
             .zIndex(0)
@@ -186,7 +169,7 @@ var body: some View {
             // Input area
             VStack(spacing: 6) {
                 HStack {
-TextField("Enter command or natural language...", text: $inputText)
+                    TextField("Enter command or natural language...", text: $inputText)
                         .textFieldStyle(.plain)
                         .font(.system(.body, design: .monospaced))
                         .lineLimit(1)
@@ -296,7 +279,7 @@ private struct TerminalView_Modern: View {
         self.viewModel = viewModel
     }
 
-var body: some View {
+    var body: some View {
         VStack(spacing: 0) {
             // Tabs bar
             TerminalTabsBar(tabs: $tabs, selected: $selectedTabId, onNew: addTab, onClose: closeTab)

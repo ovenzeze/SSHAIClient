@@ -1,5 +1,8 @@
 import SwiftUI
 import Combine
+#if os(macOS)
+import AppKit
+#endif
 
 @available(macOS 11.0, *)
 public struct SettingsView: View {
@@ -197,6 +200,99 @@ public struct SettingsView: View {
             .padding()
         }
     }
+    
+    // MARK: - Missing Methods
+    private func selectPrivateKeyFile() {
+        let panel = NSOpenPanel()
+        panel.title = "Select Private Key File"
+        panel.message = "Choose your SSH private key file"
+        panel.prompt = "Select"
+        panel.allowsMultipleSelection = false
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.canCreateDirectories = false
+        panel.directoryURL = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".ssh")
+        
+        if panel.runModal() == .OK {
+            if let url = panel.url {
+                configManager.privateKeyPath = url.path
+            }
+        }
+    }
+    
+    private func testConnection() async {
+        await MainActor.run { 
+            isTestingConnection = true 
+            testConnectionResult = "Testing..."
+        }
+        
+        do {
+            // Validate required fields
+            guard !configManager.host.isEmpty else {
+                await MainActor.run {
+                    testConnectionResult = "❌ Failed: Host is required"
+                    isTestingConnection = false
+                }
+                return
+            }
+            guard !configManager.username.isEmpty else {
+                await MainActor.run {
+                    testConnectionResult = "❌ Failed: Username is required"
+                    isTestingConnection = false
+                }
+                return
+            }
+            
+            // Test connection using NIOSSHManager
+            let sshManager = NIOSSHManager()
+            
+            // Create SSH config based on auth method
+            let authConfig: SSHConfig.Authentication
+            if configManager.authMethod == .password {
+                guard !configManager.password.isEmpty else {
+                    await MainActor.run {
+                        testConnectionResult = "❌ Failed: Password is required"
+                        isTestingConnection = false
+                    }
+                    return
+                }
+                authConfig = .password(configManager.password)
+            } else {
+                // Private key auth - currently not supported by NIOSSHManager
+                await MainActor.run {
+                    testConnectionResult = "❌ Failed: Private key authentication not yet implemented"
+                    isTestingConnection = false
+                }
+                return
+            }
+            
+            let config = SSHConfig(
+                host: configManager.host,
+                port: configManager.port,
+                username: configManager.username,
+                authentication: authConfig,
+                timeoutSeconds: TimeInterval(configManager.connectionTimeout)
+            )
+            
+            // Try to connect
+            let connectionId = try await sshManager.connect(config: config)
+            
+            // Disconnect after successful test
+            try await sshManager.disconnect(connectionId: connectionId)
+            
+            // Test successful if we got here
+            await MainActor.run {
+                testConnectionResult = "✅ Success: Connection established"
+                isTestingConnection = false
+            }
+        } catch {
+            await MainActor.run {
+                testConnectionResult = "❌ Failed: \(error.localizedDescription)"
+                isTestingConnection = false
+            }
+        }
+    }
+}
 
 // MARK: - Shortcut Field (Minimal Recorder)
 
@@ -216,7 +312,6 @@ private struct ShortcutField: View {
 }
 
 #if os(macOS)
-import AppKit
 @available(macOS 11.0, *)
 private struct RecorderRepresentable: NSViewRepresentable {
     @Binding var text: String

@@ -3,7 +3,7 @@ import Combine
 
 // MARK: - Models
 
-public struct SSHConnection: Identifiable, Hashable {
+public struct SSHConnectionUI: Identifiable, Hashable {
     public let id: UUID
     public var name: String
     public var host: String
@@ -31,25 +31,25 @@ public struct SSHConnection: Identifiable, Hashable {
 
 @available(macOS 11.0, *)
 public final class ConnectionManagerViewModel: ObservableObject {
-    @Published public var connections: [SSHConnection]
+    @Published public var connections: [SSHConnectionUI]
     @Published public var searchText: String = ""
-    @Published public var selectedConnection: SSHConnection?
+    @Published public var selectedConnection: SSHConnectionUI?
 
-    public init(connections: [SSHConnection] = []) {
+    public init(connections: [SSHConnectionUI] = []) {
         // Demo seed
         if connections.isEmpty {
             self.connections = [
-                SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
-                SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
-                SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
-                SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+                SSHConnectionUI(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+                SSHConnectionUI(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+                SSHConnectionUI(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+                SSHConnectionUI(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
             ]
         } else {
             self.connections = connections
         }
     }
 
-    public var filteredConnections: [SSHConnection] {
+    public var filteredConnections: [SSHConnectionUI] {
         let term = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !term.isEmpty else { return connections }
         return connections.filter { c in
@@ -61,8 +61,8 @@ public final class ConnectionManagerViewModel: ObservableObject {
         }
     }
 
-    public var grouped: [(String, [SSHConnection]) ] {
-        let groups = Dictionary(grouping: filteredConnections) { (c: SSHConnection) in
+    public var grouped: [(String, [SSHConnectionUI]) ] {
+        let groups = Dictionary(grouping: filteredConnections) { (c: SSHConnectionUI) in
             if c.isFavorite { return "★ Favorites" }
             return c.group ?? "Ungrouped"
         }
@@ -75,9 +75,9 @@ public final class ConnectionManagerViewModel: ObservableObject {
 @available(macOS 11.0, *)
 public struct ConnectionManager: View {
     @ObservedObject var viewModel: ConnectionManagerViewModel
-    public var onConnect: (SSHConnection) -> Void
+    public var onConnect: (SSHConnectionUI) -> Void
 
-    public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnection) -> Void) {
+    public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnectionUI) -> Void) {
         self.viewModel = viewModel
         self.onConnect = onConnect
     }
@@ -94,7 +94,10 @@ public struct ConnectionManager: View {
             // List
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: 8) {
-                    ForEach(viewModel.grouped, id: \.0) { (groupName, items) in
+                    ForEach(Array(viewModel.grouped.indices), id: \.self) { idx in
+                        let group = viewModel.grouped[idx]
+                        let groupName = group.0
+                        let items = group.1
                         Section(header: Text(groupName)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -124,7 +127,7 @@ public struct ConnectionManager: View {
         .accessibilityLabel(Text("Connection Manager"))
     }
 
-    private func toggleFavorite(_ item: SSHConnection) {
+    private func toggleFavorite(_ item: SSHConnectionUI) {
         if let idx = viewModel.connections.firstIndex(of: item) {
             viewModel.connections[idx].isFavorite.toggle()
         }
@@ -133,7 +136,7 @@ public struct ConnectionManager: View {
 
 @available(macOS 11.0, *)
 private struct ConnectionRow: View {
-    let item: SSHConnection
+    let item: SSHConnectionUI
     var isSelected: Bool
     var onConnect: () -> Void
     @Namespace private var highlight
