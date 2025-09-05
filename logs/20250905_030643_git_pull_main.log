@@ -1,0 +1,21 @@
+From github.com:ovenzeze/SSHAIClient
+ * branch            main       -> FETCH_HEAD
+Updating 1d1a0ba..eadf405
+Fast-forward
+ Sources/SSHAIClient/Core/Data/KeychainStore.swift  |  58 ++++
+ .../SSHAIClient/Core/Data/LocalDataManager.swift   | 308 ++++++++++++++-----
+ .../SSHAIClient/Core/Data/MigrationManager.swift   |  26 ++
+ Sources/SSHAIClient/Core/Data/SecureStore.swift    |   9 +
+ .../SSHAIClient/UI/Views/ConnectionManager.swift   | 208 +++++++++++++
+ Sources/SSHAIClient/UI/Views/ContentView.swift     |  43 ++-
+ Sources/SSHAIClient/UI/Views/Helpers.swift         |  46 +++
+ Sources/SSHAIClient/UI/Views/SettingsView.swift    | 130 ++++++++
+ Sources/SSHAIClient/UI/Views/TerminalView.swift    | 329 ++++++++++++++++-----
+ .../SSHAIClientPersistenceTests.swift              |  59 ++++
+ 10 files changed, 1071 insertions(+), 145 deletions(-)
+ create mode 100644 Sources/SSHAIClient/Core/Data/KeychainStore.swift
+ create mode 100644 Sources/SSHAIClient/Core/Data/MigrationManager.swift
+ create mode 100644 Sources/SSHAIClient/Core/Data/SecureStore.swift
+ create mode 100644 Sources/SSHAIClient/UI/Views/ConnectionManager.swift
+ create mode 100644 Sources/SSHAIClient/UI/Views/SettingsView.swift
+ create mode 100644 Tests/SSHAIClientTests/SSHAIClientPersistenceTests.swift

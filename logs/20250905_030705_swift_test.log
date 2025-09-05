@@ -1,0 +1,781 @@
+warning: 'sqlite.swift': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/SQLite.swift/Sources/SQLite/PrivacyInfo.xcprivacy
+warning: 'swiftterm': found 1 file(s) which are unhandled; explicitly declare them as resources or exclude from the target
+    /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/SwiftTerm/Sources/SwiftTerm/Mac/README.md
+[0/1] Planning build
+[1/1] Compiling plugin GenerateManual
+[2/2] Compiling plugin GenerateDoccReference
+Building for debugging...
+[2/9] Write sources
+[3/9] Write swift-version--58304C5D6DBC2206.txt
+error: emit-module command failed with exit code 1 (use -v to see invocation)
+[5/14] Emitting module SSHAIClient
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: error: invalid redeclaration of 'SSHConnection'
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- error: invalid redeclaration of 'SSHConnection'
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:180:45: error: 'SSHConnection' is ambiguous for type lookup in this context
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+    :
+178 | 	
+179 | 	// MARK: - CRUD: Connections
+180 | 	public func upsertConnection(_ connection: SSHConnection) throws {
+    |                                             `- error: 'SSHConnection' is ambiguous for type lookup in this context
+181 |         let encHost = try encryptToB64(connection.host)
+182 |         let encUser = try encryptToB64(connection.username)
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:6:15: note: found this candidate
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:193:43: error: 'SSHConnection' is ambiguous for type lookup in this context
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+    :
+191 | 	}
+192 | 	
+193 | 	public func listConnections() throws -> [SSHConnection] {
+    |                                           `- error: 'SSHConnection' is ambiguous for type lookup in this context
+194 |         let query = connections.order(createdAt.desc)
+195 |         return try db?.prepare(query).map { row in
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:6:15: note: found this candidate
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:34:41: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 32 | @available(macOS 11.0, *)
+ 33 | public final class ConnectionManagerViewModel: ObservableObject {
+ 34 |     @Published public var connections: [SSHConnection]
+    |                                         `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 35 |     @Published public var searchText: String = ""
+ 36 |     @Published public var selectedConnection: SSHConnection?
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:36:47: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 34 |     @Published public var connections: [SSHConnection]
+ 35 |     @Published public var searchText: String = ""
+ 36 |     @Published public var selectedConnection: SSHConnection?
+    |                                               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 37 | 
+ 38 |     public init(connections: [SSHConnection] = []) {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:38:31: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 36 |     @Published public var selectedConnection: SSHConnection?
+ 37 | 
+ 38 |     public init(connections: [SSHConnection] = []) {
+    |                               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 39 |         // Demo seed
+ 40 |         if connections.isEmpty {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:52:38: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 50 |     }
+ 51 | 
+ 52 |     public var filteredConnections: [SSHConnection] {
+    |                                      `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 53 |         let term = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+ 54 |         guard !term.isEmpty else { return connections }
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:64:36: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 62 |     }
+ 63 | 
+ 64 |     public var grouped: [(String, [SSHConnection]) ] {
+    |                                    `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 65 |         let groups = Dictionary(grouping: filteredConnections) { (c: SSHConnection) in
+ 66 |             if c.isFavorite { return "★ Favorites" }
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:78:28: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 76 | public struct ConnectionManager: View {
+ 77 |     @ObservedObject var viewModel: ConnectionManagerViewModel
+ 78 |     public var onConnect: (SSHConnection) -> Void
+    |                            `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 79 | 
+ 80 |     public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnection) -> Void) {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:80:109: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 78 |     public var onConnect: (SSHConnection) -> Void
+ 79 | 
+ 80 |     public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnection) -> Void) {
+    |                                                                                                             `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 81 |         self.viewModel = viewModel
+ 82 |         self.onConnect = onConnect
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:127:41: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+125 |     }
+126 | 
+127 |     private func toggleFavorite(_ item: SSHConnection) {
+    |                                         `- error: 'SSHConnection' is ambiguous for type lookup in this context
+128 |         if let idx = viewModel.connections.firstIndex(of: item) {
+129 |             viewModel.connections[idx].isFavorite.toggle()
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:136:15: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+134 | @available(macOS 11.0, *)
+135 | private struct ConnectionRow: View {
+136 |     let item: SSHConnection
+    |               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+137 |     var isSelected: Bool
+138 |     var onConnect: () -> Void
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ContentView.swift:84:37: error: 'SSHConnection' is ambiguous for type lookup in this context
+ 82 |     }
+ 83 | 
+ 84 |     private func connect(from conn: SSHConnection) {
+    |                                     `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 85 |         let cfg = SSHConfig(host: conn.host, port: conn.port, username: conn.username, authentication: .password(""), timeoutSeconds: 30)
+ 86 |         Task { _ = await viewModel.connect(config: cfg) }
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:6:15: note: found this candidate
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+error: compile command failed due to signal 6 (use -v to see invocation)
+[6/14] Compiling SSHAIClient KeychainStore.swift
+[7/14] Compiling SSHAIClient ContentView.swift
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:38:31: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 36 |     @Published public var selectedConnection: SSHConnection?
+ 37 | 
+ 38 |     public init(connections: [SSHConnection] = []) {
+    |                               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 39 |         // Demo seed
+ 40 |         if connections.isEmpty {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ContentView.swift:84:37: error: 'SSHConnection' is ambiguous for type lookup in this context
+ 82 |     }
+ 83 | 
+ 84 |     private func connect(from conn: SSHConnection) {
+    |                                     `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 85 |         let cfg = SSHConfig(host: conn.host, port: conn.port, username: conn.username, authentication: .password(""), timeoutSeconds: 30)
+ 86 |         Task { _ = await viewModel.connect(config: cfg) }
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:6:15: note: found this candidate
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:80:109: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 78 |     public var onConnect: (SSHConnection) -> Void
+ 79 | 
+ 80 |     public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnection) -> Void) {
+    |                                                                                                             `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 81 |         self.viewModel = viewModel
+ 82 |         self.onConnect = onConnect
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:6:15: error: invalid redeclaration of 'SSHConnection'
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- error: invalid redeclaration of 'SSHConnection'
+  7 |     public let id: UUID
+  8 |     public var name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:34:41: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 32 | @available(macOS 11.0, *)
+ 33 | public final class ConnectionManagerViewModel: ObservableObject {
+ 34 |     @Published public var connections: [SSHConnection]
+    |                                         `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 35 |     @Published public var searchText: String = ""
+ 36 |     @Published public var selectedConnection: SSHConnection?
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:36:47: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 34 |     @Published public var connections: [SSHConnection]
+ 35 |     @Published public var searchText: String = ""
+ 36 |     @Published public var selectedConnection: SSHConnection?
+    |                                               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 37 | 
+ 38 |     public init(connections: [SSHConnection] = []) {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:38:31: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 36 |     @Published public var selectedConnection: SSHConnection?
+ 37 | 
+ 38 |     public init(connections: [SSHConnection] = []) {
+    |                               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 39 |         // Demo seed
+ 40 |         if connections.isEmpty {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:52:38: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 50 |     }
+ 51 | 
+ 52 |     public var filteredConnections: [SSHConnection] {
+    |                                      `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 53 |         let term = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+ 54 |         guard !term.isEmpty else { return connections }
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:64:36: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 62 |     }
+ 63 | 
+ 64 |     public var grouped: [(String, [SSHConnection]) ] {
+    |                                    `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 65 |         let groups = Dictionary(grouping: filteredConnections) { (c: SSHConnection) in
+ 66 |             if c.isFavorite { return "★ Favorites" }
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:78:28: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 76 | public struct ConnectionManager: View {
+ 77 |     @ObservedObject var viewModel: ConnectionManagerViewModel
+ 78 |     public var onConnect: (SSHConnection) -> Void
+    |                            `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 79 | 
+ 80 |     public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnection) -> Void) {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:80:109: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+ 78 |     public var onConnect: (SSHConnection) -> Void
+ 79 | 
+ 80 |     public init(viewModel: ConnectionManagerViewModel = ConnectionManagerViewModel(), onConnect: @escaping (SSHConnection) -> Void) {
+    |                                                                                                             `- error: 'SSHConnection' is ambiguous for type lookup in this context
+ 81 |         self.viewModel = viewModel
+ 82 |         self.onConnect = onConnect
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:127:41: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+125 |     }
+126 | 
+127 |     private func toggleFavorite(_ item: SSHConnection) {
+    |                                         `- error: 'SSHConnection' is ambiguous for type lookup in this context
+128 |         if let idx = viewModel.connections.firstIndex(of: item) {
+129 |             viewModel.connections[idx].isFavorite.toggle()
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:136:15: error: 'SSHConnection' is ambiguous for type lookup in this context
+  4 | // MARK: - Models
+  5 | 
+  6 | public struct SSHConnection: Identifiable, Hashable {
+    |               `- note: found this candidate
+  7 |     public let id: UUID
+  8 |     public var name: String
+    :
+134 | @available(macOS 11.0, *)
+135 | private struct ConnectionRow: View {
+136 |     let item: SSHConnection
+    |               `- error: 'SSHConnection' is ambiguous for type lookup in this context
+137 |     var isSelected: Bool
+138 |     var onConnect: () -> Void
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: found this candidate
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: found this candidate
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:42:128: error: extra argument 'tags' in call
+ 40 |         if connections.isEmpty {
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+    |                                                                                                                                `- error: extra argument 'tags' in call
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:42:31: error: missing argument for parameter 'id' in call
+ 40 |         if connections.isEmpty {
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+    |                               `- error: missing argument for parameter 'id' in call
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: 'init(id:name:host:port:username:createdAt:)' declared here
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: 'init(id:name:host:port:username:createdAt:)' declared here
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:42:108: error: cannot convert value of type 'String' to expected argument type 'Int'
+ 40 |         if connections.isEmpty {
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+    |                                                                                                            `- error: cannot convert value of type 'String' to expected argument type 'Int'
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:42:158: error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 40 |         if connections.isEmpty {
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+    |                                                                                                                                                              `- error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:43:126: error: extra argument 'tags' in call
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+    |                                                                                                                              `- error: extra argument 'tags' in call
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:43:31: error: missing argument for parameter 'id' in call
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+    |                               `- error: missing argument for parameter 'id' in call
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: 'init(id:name:host:port:username:createdAt:)' declared here
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: 'init(id:name:host:port:username:createdAt:)' declared here
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:43:106: error: cannot convert value of type 'String' to expected argument type 'Int'
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+    |                                                                                                          `- error: cannot convert value of type 'String' to expected argument type 'Int'
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:43:158: error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 41 |             self.connections = [
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+    |                                                                                                                                                              `- error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:44:117: error: extra argument 'tags' in call
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+    |                                                                                                                     `- error: extra argument 'tags' in call
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+ 46 |             ]
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:44:31: error: missing argument for parameter 'id' in call
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+    |                               `- error: missing argument for parameter 'id' in call
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+ 46 |             ]
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: 'init(id:name:host:port:username:createdAt:)' declared here
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: 'init(id:name:host:port:username:createdAt:)' declared here
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:44:100: error: cannot convert value of type 'String' to expected argument type 'Int'
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+    |                                                                                                    `- error: cannot convert value of type 'String' to expected argument type 'Int'
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+ 46 |             ]
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:44:138: error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 42 |                 SSHConnection(name: "Prod Web", host: "prod.web.example.com", username: "ec2-user", group: "Production", tags: ["web", "nginx"], isFavorite: true),
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+    |                                                                                                                                          `- error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+ 46 |             ]
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:45:118: error: extra argument 'tags' in call
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+    |                                                                                                                      `- error: extra argument 'tags' in call
+ 46 |             ]
+ 47 |         } else {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:45:31: error: missing argument for parameter 'id' in call
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+    |                               `- error: missing argument for parameter 'id' in call
+ 46 |             ]
+ 47 |         } else {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift:9:15: note: 'init(id:name:host:port:username:createdAt:)' declared here
+  7 | 
+  8 | // MARK: - Public Data Models
+  9 | public struct SSHConnection: Equatable, Identifiable {
+    |               `- note: 'init(id:name:host:port:username:createdAt:)' declared here
+ 10 |     public let id: String
+ 11 |     public let name: String
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:45:100: error: cannot convert value of type 'String' to expected argument type 'Int'
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+    |                                                                                                    `- error: cannot convert value of type 'String' to expected argument type 'Int'
+ 46 |             ]
+ 47 |         } else {
+
+/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:45:139: error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 43 |                 SSHConnection(name: "Prod DB", host: "prod.db.example.com", username: "postgres", group: "Production", tags: ["db", "postgres"], isFavorite: false),
+ 44 |                 SSHConnection(name: "Staging", host: "stg.example.com", username: "deploy", group: "Staging", tags: ["stg"], isFavorite: false),
+ 45 |                 SSHConnection(name: "Dev Mac Mini", host: "192.168.1.20", username: "clay", group: "Personal", tags: ["dev"], isFavorite: true)
+    |                                                                                                                                           `- error: cannot convert value of type 'Bool' to expected argument type 'Date'
+ 46 |             ]
+ 47 |         } else {
+
+Assertion failed: (inserted), function recordOpenedType at TypeOfReference.cpp:594.
+(to display assertion configuration options: -Xllvm -assert-help)
+Please submit a bug report (https://swift.org/contributing/#reporting-bugs) and include the crash backtrace.
+Stack dump:
+0.	Program arguments: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-frontend -frontend -c /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/AI/CommandGenerating.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/AI/CommandGenerator.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/AI/ErrorAnalyzer.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/AI/HybridIntentClassifier.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/AI/SimpleInputClassifier.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/KeychainStore.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/LocalDataManager.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/MigrationManager.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Data/SecureStore.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Network/MockSSHManager.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Network/NIOSSHManager.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Core/Network/SSHManaging.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/Features/Terminal/ViewModels/TerminalViewModel.swift -primary-file /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ContentView.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/Helpers.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/SettingsView.swift /Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/TerminalView.swift -emit-dependencies-path /Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/SSHAIClient.build/ConnectionManager.d -emit-reference-dependencies-path /Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/SSHAIClient.build/ConnectionManager.swiftdeps -target arm64-apple-macosx10.15 -Xllvm -aarch64-use-tbi -enable-objc-interop -stack-check -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -I /Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/Modules -I /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks -enable-testing -g -debug-info-format=dwarf -dwarf-version=4 -module-cache-path /Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/ModuleCache -swift-version 6 -Onone -D SWIFT_PACKAGE -D DEBUG -new-driver-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swift-driver -empty-abi-descriptor -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift -enable-anonymous-context-mangled-names -file-compilation-dir /Users/clayzhang/Code/SSHAIClient-track-c -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-atomics/Sources/_AtomicsShims/include/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-atomics/Sources/_AtomicsShims/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-crypto/Sources/CCryptoBoringSSLShims/include/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-crypto/Sources/CCryptoBoringSSLShims/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-crypto/Sources/CCryptoBoringSSL/include/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-crypto/Sources/CCryptoBoringSSL/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/CNIOWASI.build/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIOWASI/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIOWindows/include/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIOWindows/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/CNIOLinux.build/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIOLinux/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/CNIODarwin.build/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIODarwin/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/CNIOAtomics.build/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIOAtomics/include -Xcc -fmodule-map-file=/Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/CNIOPosix.build/module.modulemap -Xcc -I -Xcc /Users/clayzhang/Code/SSHAIClient-track-c/.build/checkouts/swift-nio/Sources/CNIOPosix/include -Xcc -isysroot -Xcc /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.5.sdk -Xcc -F -Xcc /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -Xcc -F -Xcc /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks -Xcc -fPIC -Xcc -g -module-name SSHAIClient -package-name sshaiclient_track_c -disable-clang-spi -target-sdk-version 15.5 -target-sdk-name macosx15.5 -external-plugin-path /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/swift/host/plugins#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server -external-plugin-path /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/local/lib/swift/host/plugins#/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/bin/swift-plugin-server -in-process-plugin-server-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/libSwiftInProcPluginServer.dylib -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/local/lib/swift/host/plugins -parse-as-library -o /Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/SSHAIClient.build/ConnectionManager.swift.o -index-store-path /Users/clayzhang/Code/SSHAIClient-track-c/.build/arm64-apple-macosx/debug/index/store -index-system-modules
+1.	Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)
+2.	Compiling with the current language version
+3.	While evaluating request TypeCheckSourceFileRequest(source_file "/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift")
+4.	While evaluating request TypeCheckFunctionBodyRequest(SSHAIClient.(file).ConnectionManager._@/Users/clayzhang/Code/SSHAIClient-track-c/Sources/SSHAIClient/UI/Views/ConnectionManager.swift:85:32)
+Stack dump without symbol names (ensure you have llvm-symbolizer in your PATH or set the environment var `LLVM_SYMBOLIZER_PATH` to point to it):
+0  swift-frontend           0x0000000108a3ee24 llvm::sys::PrintStackTrace(llvm::raw_ostream&, int) + 56
+1  swift-frontend           0x0000000108a3cc5c llvm::sys::RunSignalHandlers() + 112
+2  swift-frontend           0x0000000108a3f460 SignalHandler(int) + 360
+3  libsystem_platform.dylib 0x000000018f0e4624 _sigtramp + 56
+4  libsystem_pthread.dylib  0x000000018f0aa88c pthread_kill + 296
+5  libsystem_c.dylib        0x000000018efb3c60 abort + 124
+6  swift-frontend           0x00000001043945c8 ASSERT_failure(char const*, char const*, int, char const*) + 1720
+7  swift-frontend           0x0000000103bd67e0 swift::constraints::ConstraintSystem::recordOpenedTypes(swift::constraints::ConstraintLocatorBuilder, llvm::DenseMap<swift::GenericTypeParamType*, swift::TypeVariableType*, llvm::DenseMapInfo<swift::GenericTypeParamType*, void>, llvm::detail::DenseMapPair<swift::GenericTypeParamType*, swift::TypeVariableType*>> const&, bool) + 764
+8  swift-frontend           0x0000000103bde7fc swift::constraints::ConstraintSystem::getTypeOfMemberReference(swift::Type, swift::ValueDecl*, swift::DeclContext*, bool, swift::FunctionRefKind, swift::constraints::ConstraintLocator*, llvm::DenseMap<swift::GenericTypeParamType*, swift::TypeVariableType*, llvm::DenseMapInfo<swift::GenericTypeParamType*, void>, llvm::detail::DenseMapPair<swift::GenericTypeParamType*, swift::TypeVariableType*>>*) + 6136
+9  swift-frontend           0x0000000103bdfb88 swift::constraints::ConstraintSystem::resolveOverload(swift::constraints::ConstraintLocator*, swift::Type, swift::constraints::OverloadChoice, swift::DeclContext*) + 760
+10 swift-frontend           0x0000000103a6f51c swift::constraints::ConstraintSystem::simplifyConstraint(swift::constraints::Constraint const&) + 1856
+11 swift-frontend           0x0000000103a98640 swift::constraints::DisjunctionStep::attempt(swift::constraints::DisjunctionChoice const&) + 180
+12 swift-frontend           0x0000000103a97374 swift::constraints::BindingStep<swift::constraints::DisjunctionChoiceProducer>::take(bool) + 964
+13 swift-frontend           0x0000000103a84134 swift::constraints::ConstraintSystem::solveImpl(llvm::SmallVectorImpl<swift::constraints::Solution>&) + 624
+14 swift-frontend           0x0000000103b3b084 swift::constraints::ConstraintSystem::salvage() + 192
+15 swift-frontend           0x00000001039a124c swift::TypeChecker::applyResultBuilderBodyTransform(swift::FuncDecl*, swift::Type) + 2200
+16 swift-frontend           0x0000000103d94834 swift::TypeCheckFunctionBodyRequest::evaluate(swift::Evaluator&, swift::AbstractFunctionDecl*) const + 496
+17 swift-frontend           0x00000001041917b4 swift::TypeCheckFunctionBodyRequest::OutputType swift::Evaluator::getResultUncached<swift::TypeCheckFunctionBodyRequest, swift::TypeCheckFunctionBodyRequest::OutputType swift::evaluateOrDefault<swift::TypeCheckFunctionBodyRequest>(swift::Evaluator&, swift::TypeCheckFunctionBodyRequest, swift::TypeCheckFunctionBodyRequest::OutputType)::'lambda'()>(swift::TypeCheckFunctionBodyRequest const&, swift::TypeCheckFunctionBodyRequest::OutputType swift::evaluateOrDefault<swift::TypeCheckFunctionBodyRequest>(swift::Evaluator&, swift::TypeCheckFunctionBodyRequest, swift::TypeCheckFunctionBodyRequest::OutputType)::'lambda'()) + 640
+18 swift-frontend           0x00000001040f4370 swift::AbstractFunctionDecl::getTypecheckedBody() const + 160
+19 swift-frontend           0x0000000103de69a0 swift::TypeCheckSourceFileRequest::evaluate(swift::Evaluator&, swift::SourceFile*) const + 912
+20 swift-frontend           0x0000000103deccd8 swift::TypeCheckSourceFileRequest::OutputType swift::Evaluator::getResultUncached<swift::TypeCheckSourceFileRequest, swift::TypeCheckSourceFileRequest::OutputType swift::evaluateOrDefault<swift::TypeCheckSourceFileRequest>(swift::Evaluator&, swift::TypeCheckSourceFileRequest, swift::TypeCheckSourceFileRequest::OutputType)::'lambda'()>(swift::TypeCheckSourceFileRequest const&, swift::TypeCheckSourceFileRequest::OutputType swift::evaluateOrDefault<swift::TypeCheckSourceFileRequest>(swift::Evaluator&, swift::TypeCheckSourceFileRequest, swift::TypeCheckSourceFileRequest::OutputType)::'lambda'()) + 624
+21 swift-frontend           0x0000000103de65f4 swift::performTypeChecking(swift::SourceFile&) + 308
+22 swift-frontend           0x0000000102c5025c swift::CompilerInstance::performSema() + 248
+23 swift-frontend           0x0000000102893274 performCompile(swift::CompilerInstance&, int&, swift::FrontendObserver*) + 772
+24 swift-frontend           0x0000000102891fd8 swift::performFrontend(llvm::ArrayRef<char const*>, char const*, void*, swift::FrontendObserver*) + 3716
+25 swift-frontend           0x00000001028160bc swift::mainEntry(int, char const**) + 5428
+26 dyld                     0x000000018ed0ab98 start + 6076
+error: fatalError

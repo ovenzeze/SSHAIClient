@@ -1,0 +1,6 @@
+[track-c-data-persistence e5f6ab4] feat(data): SQLite persistence + encryption + migrations + tests
+ 5 files changed, 392 insertions(+), 66 deletions(-)
+ create mode 100644 Sources/SSHAIClient/Core/Data/KeychainStore.swift
+ create mode 100644 Sources/SSHAIClient/Core/Data/MigrationManager.swift
+ create mode 100644 Sources/SSHAIClient/Core/Data/SecureStore.swift
+ create mode 100644 Tests/SSHAIClientTests/SSHAIClientPersistenceTests.swift

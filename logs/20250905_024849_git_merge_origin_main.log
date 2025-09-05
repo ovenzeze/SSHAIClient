@@ -1,0 +1,9 @@
+Merge made by the 'ort' strategy.
+ .../SSHAIClient/UI/Views/ConnectionManager.swift   | 208 +++++++++++++
+ Sources/SSHAIClient/UI/Views/ContentView.swift     |  43 ++-
+ Sources/SSHAIClient/UI/Views/Helpers.swift         |  46 +++
+ Sources/SSHAIClient/UI/Views/SettingsView.swift    | 130 ++++++++
+ Sources/SSHAIClient/UI/Views/TerminalView.swift    | 329 ++++++++++++++++-----
+ 5 files changed, 677 insertions(+), 79 deletions(-)
+ create mode 100644 Sources/SSHAIClient/UI/Views/ConnectionManager.swift
+ create mode 100644 Sources/SSHAIClient/UI/Views/SettingsView.swift
