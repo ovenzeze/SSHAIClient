@@ -85,7 +85,7 @@ public struct ConnectionManager: View {
     public var body: some View {
         VStack(spacing: 0) {
             // Search
-            SearchBar(text: $viewModel.searchText, placeholder: "Search connections")
+            SearchBar(text: $viewModel.searchText, placeholder: "Search connections (⌘F)")
                 .padding(8)
                 .background(Color(PlatformColor.controlBackgroundColor))
 
@@ -137,23 +137,34 @@ private struct ConnectionRow: View {
     var isSelected: Bool
     var onConnect: () -> Void
     @Namespace private var highlight
+    @State private var isHover = false
 
     var body: some View {
         HStack(spacing: 10) {
-            Circle().fill(item.isFavorite ? Color.yellow : Color.secondary.opacity(0.3))
-                .frame(width: 6, height: 6)
+            // Favorite indicator (star) for clearer semantics
+            if item.isFavorite {
+                Image(systemName: "star.fill").foregroundColor(.yellow).font(.system(size: 10))
+            } else {
+                Circle().fill(Color.secondary.opacity(0.3)).frame(width: 6, height: 6)
+            }
             VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text(item.name).font(.system(size: 13, weight: .medium))
+                HStack(spacing: 6) {
+                    Text(item.name)
+                        .font(.system(size: 13, weight: .medium))
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                     if let g = item.group { TagView(text: g) }
                 }
                 Text("\(item.username)@\(item.host):\(item.port)")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
+                    .modifier(TextSelectionModifier())
             }
             Spacer()
             Button(action: onConnect) {
-                Image(systemName: "bolt.horizontal.fill")
+                Image(systemName: "terminal")
             }
             .buttonStyle(.plain)
             .help("Connect")
@@ -162,17 +173,21 @@ private struct ConnectionRow: View {
         .padding(.vertical, 6)
         .background(
             ZStack(alignment: .leading) {
+                let base = isSelected ? Color.accentColor.opacity(0.16) : (isHover ? Color.primary.opacity(0.06) : Color.clear)
+                RoundedRectangle(cornerRadius: 6).fill(base)
                 if isSelected {
                     RoundedRectangle(cornerRadius: 6)
-                        .fill(Color.accentColor.opacity(0.12))
+                        .stroke(Color.accentColor.opacity(0.6), lineWidth: 1)
                         .matchedGeometryEffect(id: "row-select", in: highlight)
                 }
             }
         )
         .cornerRadius(6)
+        .onHover { isHover = $0 }
         .contentShape(RoundedRectangle(cornerRadius: 6))
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text("\(item.name), host \(item.host)"))
+        .accessibilityHint(Text("Press Enter to connect"))
     }
 }
 
@@ -182,9 +197,11 @@ private struct TagView: View {
     var body: some View {
         Text(text)
             .font(.caption2)
+            .fontWeight(.semibold)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(Color.secondary.opacity(0.15))
+            .foregroundColor(Color.primary.opacity(0.9))
+            .background(Color.white.opacity(0.12))
             .cornerRadius(4)
             .accessibilityHidden(true)
     }

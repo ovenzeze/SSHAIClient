@@ -46,7 +46,7 @@ private struct TerminalTabsBar: View {
                 ForEach(tabs) { tab in
                     HStack(spacing: 6) {
                         Text(tab.title)
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 12, weight: selected == tab.id ? .semibold : .regular))
                             .lineLimit(1)
                             .padding(.vertical, 6)
                             .padding(.leading, 10)
@@ -56,12 +56,13 @@ private struct TerminalTabsBar: View {
                         }
                         .buttonStyle(.plain)
                         .padding(.trailing, 8)
+                        .help("Close Tab (⌘W)")
                     }
-                    .background(selected == tab.id ? Color.accentColor.opacity(0.15) : Color.clear)
+                    .background(selected == tab.id ? Color.accentColor.opacity(0.22) : Color.clear)
                     .cornerRadius(6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)
-                            .stroke(selected == tab.id ? Color.accentColor : Color.secondary.opacity(0.2), lineWidth: 1)
+                            .stroke(selected == tab.id ? Color.accentColor.opacity(0.9) : Color.secondary.opacity(0.12), lineWidth: selected == tab.id ? 1 : 1)
                     )
                     .contentShape(RoundedRectangle(cornerRadius: 6))
                     .onTapGesture { withAnimation(.easeInOut) { selected = tab.id } }
@@ -72,7 +73,9 @@ private struct TerminalTabsBar: View {
                 }
                 Button(action: onNew) {
                     Image(systemName: "plus")
-                }.buttonStyle(.plain)
+                }
+                .buttonStyle(.plain)
+                .help("New Tab (⌘T)")
             }
             .padding(.horizontal, 8)
         }
@@ -145,9 +148,12 @@ var body: some View {
             // Input area
             VStack(spacing: 6) {
                 HStack {
-                    TextField("Enter command or natural language...", text: $inputText)
+TextField("Enter command or natural language...", text: $inputText)
                         .textFieldStyle(.plain)
                         .font(.system(.body, design: .monospaced))
+                        .lineLimit(1)
+                        .disableAutocorrection(true)
+                        .layoutPriority(1)
                         .modifier(OnSubmitModifier { handleInput() })
                         .modifier(FocusOnAppearModifier())
                     
@@ -295,9 +301,12 @@ var body: some View {
             // Input area with autocomplete
             VStack(spacing: 6) {
                 HStack {
-                    TextField("Enter command or natural language...", text: $inputText)
+TextField("Enter command or natural language...", text: $inputText)
                         .textFieldStyle(.plain)
                         .font(.system(.body, design: .monospaced))
+                        .lineLimit(1)
+                        .disableAutocorrection(true)
+                        .layoutPriority(1)
                         .focused($isTextFieldFocused)
                         .modifier(OnSubmitModifier { handleInput() })
                         .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
