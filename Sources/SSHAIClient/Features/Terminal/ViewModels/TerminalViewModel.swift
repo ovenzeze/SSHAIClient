@@ -9,19 +9,19 @@ import Foundation
 /// - Request CommandGenerator for NL2CLI suggestions
 /// - Execute commands via SSHConnectionManager and persist history via LocalDataManager
 /// - Surface AI suggestion cards and error analyses to the UI
-final class TerminalViewModel: ObservableObject {
-	@Published private(set) var currentConnectionId: UUID?
-	@Published private(set) var isConnected: Bool = false
-	@Published private(set) var currentSuggestion: String? // preview text only (UI formats)
+public final class TerminalViewModel: ObservableObject {
+	@Published public private(set) var currentConnectionId: UUID?
+	@Published public private(set) var isConnected: Bool = false
+	@Published public private(set) var currentSuggestion: CommandSuggestion? // AI生成的完整建议
 	
 	private let ssh: SSHManaging
-	private let classifier: HybridIntentClassifier
+	private let classifier: SimpleInputClassifier
 	private let generator: CommandGenerator
 	private let data: LocalDataManager
 	
-	init(
+	public init(
 		ssh: SSHManaging,
-		classifier: HybridIntentClassifier,
+		classifier: SimpleInputClassifier,
 		generator: CommandGenerator,
 		data: LocalDataManager
 	) {
@@ -35,7 +35,7 @@ final class TerminalViewModel: ObservableObject {
 	/// - Parameter config: SSH config containing host/port/user/auth.
 	/// - Returns: Bool indicating immediate success of the connection attempt.
 	@MainActor
-	func connect(config: SSHConfig) async -> Bool {
+	public func connect(config: SSHConfig) async -> Bool {
 		do {
 			let connectionId = try await ssh.connect(config: config)
 			self.currentConnectionId = connectionId
@@ -51,24 +51,95 @@ final class TerminalViewModel: ObservableObject {
 		}
 	}
 	
-	/// Handle user input in Auto mode.
+	/// Handle user input - 分类后直接执行或生成AI建议
 	/// - Parameter input: Raw text from the input bar.
 	@MainActor
-	func handleAutoInput(_ input: String) async {
-		// Logic (not implemented):
-		// 1. Build terminal context
-		// 2. Classify intent
-		// 3. If aiQuery -> request CommandGenerator to produce suggestion; set currentSuggestion
-		// 4. If command -> forward to executeCommand
+	public func handleAutoInput(_ input: String) async {
+		guard isConnected, currentConnectionId != nil else {
+			print("No active connection")
+			return
+		}
+		
+		// 使用新的简单分类器
+		let classification = classifier.classify(input)
+		print("Classification: \(classification.type), reason: \(classification.reason)")
+		
+		switch classification.type {
+		case .command:
+			// 直接执行命令
+			await executeCommand(input)
+			
+		case .naturalLanguage:
+			// 生成AI建议
+			await generateCommandSuggestion(for: input)
+		}
 	}
 	
 	/// Execute a direct shell command.
 	/// - Parameter command: The exact command to run.
 	@MainActor
-	func executeCommand(_ command: String) async {
-		// Logic (not implemented):
-		// 1. Build request and call ssh.execute
-		// 2. Append history via data.appendCommand
-		// 3. If error -> produce ErrorAnalyzer output and expose to UI
+	public func executeCommand(_ command: String) async {
+		guard isConnected, let connectionId = currentConnectionId else {
+			print("No active connection")
+			return
+		}
+		
+		do {
+			let request = CommandRequest(
+				command: command,
+				workingDirectory: "/Users/demo/workspace",
+				environment: nil,
+				allocatePty: true
+			)
+			
+			let result = try await ssh.execute(connectionId: connectionId, request: request)
+			
+			// Clear any current suggestion since we executed a command
+			self.currentSuggestion = nil
+			
+			// In a real app, we would save this to data manager and update UI
+			// For now, just log the result
+			print("Command executed: \(command)")
+			print("Exit code: \(result.exitCode)")
+			print("Stdout: \(result.stdout)")
+			if !result.stderr.isEmpty {
+				print("Stderr: \(result.stderr)")
+			}
+			
+		} catch {
+			print("Command execution failed: \(error)")
+			// In a real app, we would use ErrorAnalyzer here
+		}
+	}
+	
+	/// 生成AI命令建议
+	@MainActor
+	public func generateCommandSuggestion(for query: String) async {
+		do {
+			let context = GenerationContext(
+				host: HostInfo(osName: "Darwin", osVersion: "14.1", architecture: "x86_64"),
+				shell: ShellInfo(name: "zsh"),
+				workingDirectory: "/Users/demo/workspace"
+			)
+			
+			let suggestion = try await generator.generate(query: query, context: context)
+			self.currentSuggestion = suggestion
+			print("AI suggestion: \(suggestion.command)")
+		} catch {
+			print("Command generation failed: \(error)")
+			self.currentSuggestion = nil
+		}
+	}
+	
+	/// 执行AI推荐的命令
+	@MainActor
+	public func executeSuggestion() async {
+		guard let suggestion = currentSuggestion else {
+			print("No suggestion to execute")
+			return
+		}
+		
+		await executeCommand(suggestion.command)
+		self.currentSuggestion = nil // 清除建议
 	}
 }

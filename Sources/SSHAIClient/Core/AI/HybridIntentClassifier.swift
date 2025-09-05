@@ -20,22 +20,36 @@ import Foundation
 /// Non-goals / Not implemented:
 /// - Real ML model loading/inference; only the orchestration contract is defined
 /// - Telemetry, rate limiting, and personalization store
-final class HybridIntentClassifier {
-	struct TerminalContext {
-		let workingDirectory: String?
-		let recentCommands: [String]
-		let shell: String?
+public final class HybridIntentClassifier: @unchecked Sendable {
+	
+	public init() {}
+	public struct TerminalContext {
+		public let workingDirectory: String?
+		public let recentCommands: [String]
+		public let shell: String?
+		
+		public init(workingDirectory: String?, recentCommands: [String], shell: String?) {
+			self.workingDirectory = workingDirectory
+			self.recentCommands = recentCommands
+			self.shell = shell
+		}
 	}
 	
-	enum IntentType {
+	public enum IntentType: Sendable {
 		case command
 		case aiQuery
 	}
 	
-	struct IntentResult {
-		let type: IntentType
-		let confidence: Double // 0.0 ~ 1.0
-		let explanation: String // why the classifier decided so
+	public struct IntentResult: Sendable {
+		public let type: IntentType
+		public let confidence: Double // 0.0 ~ 1.0
+		public let explanation: String // why the classifier decided so
+		
+		public init(type: IntentType, confidence: Double, explanation: String) {
+			self.type = type
+			self.confidence = confidence
+			self.explanation = explanation
+		}
 	}
 	
 	/// Classify a single input using the multi-stage strategy described above.
@@ -43,7 +57,7 @@ final class HybridIntentClassifier {
 	///   - rawInput: The user input string to be classified.
 	///   - context: Terminal context to help the classifier.
 	/// - Returns: `IntentResult` containing type, confidence, and explanation.
-	func classify(rawInput: String, context: TerminalContext?) async -> IntentResult {
+	public func classify(rawInput: String, context: TerminalContext?) async -> IntentResult {
 		// Logic outline (not implemented):
 		// 1. Normalize input (trim, collapse whitespace) and check cache.
 		// 2. Apply rules: look for command-like tokens (pipes, redirects, sudo, flags, shebangs).

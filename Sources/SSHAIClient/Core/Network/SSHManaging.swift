@@ -26,7 +26,7 @@ public struct SSHConfig: Equatable, Sendable {
 }
 
 /// Execution request containing command and optional environment context
-public struct CommandRequest {
+public struct CommandRequest: Sendable {
     public let command: String
     public let workingDirectory: String?
     public let environment: [String: String]?
@@ -41,7 +41,7 @@ public struct CommandRequest {
 }
 
 /// Execution result, modeled for auditability and downstream processing
-public struct CommandResult {
+public struct CommandResult: Sendable {
     public let exitCode: Int32
     public let stdout: String
     public let stderr: String

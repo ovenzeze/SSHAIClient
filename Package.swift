@@ -8,7 +8,8 @@ let package = Package(
         .macOS(.v10_15)
     ],
     products: [
-        .library(name: "SSHAIClient", targets: ["SSHAIClient"])
+        .library(name: "SSHAIClient", targets: ["SSHAIClient"]),
+        .executable(name: "SSHAIClientApp", targets: ["SSHAIClientApp"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-nio-ssh.git", from: "0.6.0"),
@@ -23,6 +24,10 @@ let package = Package(
                 .product(name: "SwiftTerm", package: "SwiftTerm"),
                 .product(name: "SQLite", package: "SQLite.swift")
             ]
+        ),
+        .executableTarget(
+            name: "SSHAIClientApp",
+            dependencies: ["SSHAIClient"]
         ),
         .testTarget(
             name: "SSHAIClientTests",

@@ -100,9 +100,10 @@ final class CommandGeneratorTests: XCTestCase {
         let emptyQuery = "   "
         
         // Act & Assert
-        await XCTAssertThrowsError(
-            try await generator.generate(query: emptyQuery, context: testContext)
-        ) { error in
+        do {
+            _ = try await generator.generate(query: emptyQuery, context: testContext)
+            XCTFail("Expected error to be thrown")
+        } catch {
             guard case CommandGenerationError.invalidQuery = error else {
                 XCTFail("Expected invalidQuery error, got \(error)")
                 return
@@ -116,9 +117,10 @@ final class CommandGeneratorTests: XCTestCase {
         let chineseContext = createTestContext(language: "zh-CN")
         
         // Act & Assert
-        await XCTAssertThrowsError(
-            try await generator.generate(query: query, context: chineseContext)
-        ) { error in
+        do {
+            _ = try await generator.generate(query: query, context: chineseContext)
+            XCTFail("Expected error to be thrown")
+        } catch {
             guard case CommandGenerationError.unsupportedLanguage(let language) = error else {
                 XCTFail("Expected unsupportedLanguage error, got \(error)")
                 return
@@ -228,9 +230,10 @@ final class CommandGeneratorTests: XCTestCase {
         mockGenerator.stubGenerate(error: expectedError)
         
         // Act & Assert
-        await XCTAssertThrowsError(
-            try await mockGenerator.generate(query: query, context: testContext)
-        ) { error in
+        do {
+            _ = try await mockGenerator.generate(query: query, context: testContext)
+            XCTFail("Expected error to be thrown")
+        } catch {
             XCTAssertEqual(error as? CommandGenerationError, expectedError)
         }
     }
@@ -363,22 +366,3 @@ class MockCommandGenerator: CommandGenerating, @unchecked Sendable {
     }
 }
 
-// MARK: - XCTest Extensions
-
-extension XCTAssertThrowsError {
-    /// Async version of XCTAssertThrowsError for testing async throwing functions
-    static func XCTAssertThrowsError<T>(
-        _ expression: @autoclosure () async throws -> T,
-        _ message: @autoclosure () -> String = "",
-        file: StaticString = #filePath,
-        line: UInt = #line,
-        _ errorHandler: (_ error: Error) -> Void = { _ in }
-    ) async {
-        do {
-            _ = try await expression()
-            XCTFail("Expected error to be thrown", file: file, line: line)
-        } catch {
-            errorHandler(error)
-        }
-    }
-}

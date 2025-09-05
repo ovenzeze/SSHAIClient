@@ -10,7 +10,9 @@ import Foundation
 /// Notes:
 /// - This is a stub defining contracts and data models, without DB implementation.
 /// - Real implementation should use SQLite.swift with proper error handling and migrations.
-final class LocalDataManager {
+public final class LocalDataManager: @unchecked Sendable {
+	
+	public init() {}
 	// MARK: - Data Models
 	struct Connection: Equatable, Identifiable {
 		let id: String

@@ -39,7 +39,7 @@ final class TerminalViewModelTests: XCTestCase {
     var mockSSHManager: MockSSHManager!
     // We will use dummy objects for other dependencies for now.
     // In a real-world scenario, these would also be mocked.
-    var dummyClassifier: HybridIntentClassifier!
+    var dummyClassifier: SimpleInputClassifier!
     var dummyGenerator: CommandGenerator!
     var dummyDataManager: LocalDataManager!
     
@@ -48,7 +48,7 @@ final class TerminalViewModelTests: XCTestCase {
     override func setUp() {
         super.setUp()
         // Dependencies can be initialized here for each test.
-        dummyClassifier = HybridIntentClassifier()
+        dummyClassifier = SimpleInputClassifier()
         dummyGenerator = CommandGenerator()
         dummyDataManager = LocalDataManager()
     }

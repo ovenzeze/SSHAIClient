@@ -2,11 +2,13 @@ import Foundation
 
 /// A rule-based command generator that provides basic command suggestions.
 /// This serves as a baseline implementation and fallback when AI services are unavailable.
-final class CommandGenerator: CommandGenerating, @unchecked Sendable {
+public final class CommandGenerator: CommandGenerating, @unchecked Sendable {
     
     private let supportedLanguages = ["en-US", "en-GB", "en"]
     
-    func generate(query: String, context: GenerationContext) async throws -> CommandSuggestion {
+    public init() {}
+    
+    public func generate(query: String, context: GenerationContext) async throws -> CommandSuggestion {
         // Validate input
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             throw CommandGenerationError.invalidQuery("Query cannot be empty")
@@ -25,7 +27,7 @@ final class CommandGenerator: CommandGenerating, @unchecked Sendable {
         return suggestion
     }
     
-    func supportsLanguage(_ language: String) -> Bool {
+    public func supportsLanguage(_ language: String) -> Bool {
         return supportedLanguages.contains { lang in
             language.hasPrefix(lang) || lang.hasPrefix(language)
         }
